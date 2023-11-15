@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -15,6 +16,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
+
 
 import java.io.*;
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private int sceneWidth = 500;
     private int sceneHeigt = 700;
 
+    private boolean checktransition = false ;
     private static int LEFT  = 1;
     private static int RIGHT = 2;
 
@@ -53,7 +57,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private double v = 1.000;
 
-    private int  heart    = 3;
+    private int  heart    = 20000;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -127,7 +131,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         heartLabel = new Label("Heart : " + heart);
         heartLabel.setTranslateX(sceneWidth - 70);
         if (loadFromSave == false) {
-            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel, newGame);
+            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel, newGame,load);
         } else {
             root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel);
         }
@@ -184,6 +188,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
 
     }
+
 
     private void initBoard() {
         for (int i = 0; i < 4; i++) {
@@ -303,6 +308,14 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private boolean colideToLeftWall            = false;
     private boolean colideToRightBlock          = false;
     private boolean colideToBottomBlock         = false;
+
+    private boolean collideToToprightwall = false;
+
+    private boolean collideToTopleftwall = false;
+
+    private boolean collideToBottomrightwall = false;
+
+    private boolean collideToBottomleftwall = false;
     private boolean colideToLeftBlock           = false;
     private boolean colideToTopBlock            = false;
 
@@ -345,6 +358,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             return;
         }
         if (yBall >= sceneHeigt) {
+            resetColideFlags();
             goDownBall = false;
             if (!isGoldStauts) {
                 //TODO gameover
@@ -571,7 +585,15 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
     private void nextLevel() {
+
+        if (checktransition)
+        {
+            return;
+        }
+
+        checktransition = true;
         Platform.runLater(new Runnable() {
+
             @Override
             public void run() {
                 try {
@@ -595,8 +617,11 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     destroyedBlockCount = 0;
                     start(primaryStage);
 
+
                 } catch (Exception e) {
                     e.printStackTrace();
+                }finally {
+                    checktransition = false;
                 }
             }
         });
@@ -646,13 +671,13 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 for (Bonus choco : chocos) {
                     choco.choco.setY(choco.y);
                 }
+
             }
         });
 
-
         if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
             for (final Block block : blocks) {
-                int hitCode = block.checkHitToBlock(xBall, yBall);
+                int hitCode = block.checkHitToBlock(xBall, yBall,goRightBall,goDownBall);
                 if (hitCode != Block.NO_HIT) {
                     score += 1;
 
