@@ -44,6 +44,9 @@ public class Block implements Serializable {
     public static int BLOCK_STAR = 101;
     public static int BLOCK_HEART = 102;
 
+    private boolean goRightRebounded = false;
+    private boolean goDownRebounded = false;
+
 
     public Block(int row, int column, Color color, int type) {
         this.row = row;
@@ -95,101 +98,57 @@ public class Block implements Serializable {
         double blockRight = x + width;
         double blockBottom = y + height;
 
-        if (xBall + ballRadius > x && xBall - ballRadius < blockRight && yBall + ballRadius > y && yBall - ballRadius < blockBottom) {
+        boolean isColliding = xBall + ballRadius > x && xBall - ballRadius < blockRight && yBall + ballRadius > y && yBall - ballRadius < blockBottom;
+
+        if (isColliding) {
             double overlapX = Math.min(xBall + ballRadius - x, blockRight - xBall + ballRadius);
             double overlapY = Math.min(yBall + ballRadius - y, blockBottom - yBall + ballRadius);
 
             if (overlapX < overlapY) {
                 // Horizontal collision
                 if (xBall < x + width / 2) {
-                    if (goRightBall) {
-                        // Ball is moving to the right
-                        if (!goRightRebounded) {
-                            xVelocity = -Math.abs(xVelocity);  // Rebound to the left
-                            goRightRebounded = true;
-                        }
-                        return HIT_LEFT;
-                    } else {
-                        // Ball is moving to the left
-                        if (!goLeftRebounded) {
-                            xVelocity = Math.abs(xVelocity);   // Rebound to the right
-                            goLeftRebounded = true;
-                        }
-                        return HIT_RIGHT;
+                    if (goRightBall && !goRightRebounded) {
+                        xVelocity = -Math.abs(xVelocity);  // Rebound to the left
+                        goRightRebounded = true;
                     }
+                    return HIT_LEFT;
                 } else {
-                    if (goRightBall) {
-                        // Ball is moving to the right
-                        if (!goRightRebounded) {
-                            xVelocity = Math.abs(xVelocity);   // Rebound to the right
-                            goRightRebounded = true;
-                        }
-                        return HIT_RIGHT;
-                    } else {
-                        // Ball is moving to the left
-                        if (!goLeftRebounded) {
-                            xVelocity = -Math.abs(xVelocity);  // Rebound to the left
-                            goLeftRebounded = true;
-                        }
-                        return HIT_LEFT;
+                    if (goRightBall && !goRightRebounded) {
+                        xVelocity = Math.abs(xVelocity);   // Rebound to the right
+                        goRightRebounded = true;
                     }
+                    return HIT_RIGHT;
                 }
             } else {
                 // Vertical collision
                 if (yBall < y + height / 2) {
-                    if (goDownBall) {
-                        // Ball is moving downward
-                        if (!goDownRebounded) {
-                            yVelocity = -Math.abs(yVelocity);  // Rebound upward
-                            goDownRebounded = true;
-                        }
-                        return HIT_TOP;
-                    } else {
-                        // Ball is moving upward
-                        if (!goUpRebounded) {
-                            yVelocity = Math.abs(yVelocity);   // Rebound downward
-                            goUpRebounded = true;
-                        }
-                        return HIT_BOTTOM;
+                    if (goDownBall && !goDownRebounded) {
+                        yVelocity = -Math.abs(yVelocity);  // Rebound upward
+                        goDownRebounded = true;
                     }
+                    return HIT_TOP;
                 } else {
-                    if (goDownBall) {
-                        // Ball is moving downward
-                        if (!goDownRebounded) {
-                            yVelocity = Math.abs(yVelocity);   // Rebound downward
-                            goDownRebounded = true;
-                        }
-                        return HIT_BOTTOM;
-                    } else {
-                        // Ball is moving upward
-                        if (!goUpRebounded) {
-                            yVelocity = -Math.abs(yVelocity);  // Rebound upward
-                            goUpRebounded = true;
-                        }
-                        return HIT_TOP;
+                    if (goDownBall && !goDownRebounded) {
+                        yVelocity = Math.abs(yVelocity);   // Rebound downward
+                        goDownRebounded = true;
                     }
+                    return HIT_BOTTOM;
                 }
             }
+        } else {
+            // No collision, reset rebound flags
+            resetReboundedFlags();
         }
-
-        resetReboundedFlags(); // Reset flags if no collision
 
         return NO_HIT;
     }
 
-    // Add these flags in your Block class
-    private boolean goRightRebounded = false;
-    private boolean goLeftRebounded = false;
-    private boolean goDownRebounded = false;
-    private boolean goUpRebounded = false;
-
     // Helper method to reset the rebounded flags
     private void resetReboundedFlags() {
         goRightRebounded = false;
-        goLeftRebounded = false;
         goDownRebounded = false;
-        goUpRebounded = false;
     }
+
 
 
 
