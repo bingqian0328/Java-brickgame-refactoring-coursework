@@ -87,7 +87,6 @@ public class Block implements Serializable {
 
     }
 
-
     public int checkHitToBlock(double xBall, double yBall, boolean goRightBall, boolean goDownBall) {
         if (isDestroyed) {
             return NO_HIT;
@@ -148,9 +147,6 @@ public class Block implements Serializable {
         goRightRebounded = false;
         goDownRebounded = false;
     }
-
-
-
 
     public static int getPaddingTop() {
         return block.paddingTop;

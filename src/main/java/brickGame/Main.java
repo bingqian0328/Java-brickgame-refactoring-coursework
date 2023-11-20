@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -16,12 +15,18 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-
+import javafx.animation.Timeline;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+
 
 public class Main extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
 
@@ -63,6 +68,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private long hitTime  = 0;
     private long goldTime = 0;
 
+    private Label countdownLabel;
+
     private GameEngine engine;
     public static String savePath    = "C:/save/save.mdds";
     public static String savePathDir = "C:/save/";
@@ -99,6 +106,11 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
 
+        // Create an ImageView for the background image
+        ImageView backgroundImage = new ImageView(new Image("bg.jpg"));
+        backgroundImage.setFitWidth(sceneWidth);
+        backgroundImage.setFitHeight(sceneHeigt);
+
 
         if (loadFromSave == false) {
             level++;
@@ -109,7 +121,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 new Score().showWin(this);
                 return;
             }
-
             initBall();
             initBreak();
             initBoard();
@@ -125,6 +136,11 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
 
         root = new Pane();
+        root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+
+        // Add the background image as the first child of the root Pane
+        root.getChildren().add(backgroundImage);
+
         scoreLabel = new Label("Score: " + score);
         levelLabel = new Label("Level: " + level);
         levelLabel.setTranslateY(20);
@@ -189,7 +205,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     }
 
-
     private void initBoard() {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < level + 1; j++) {
@@ -248,7 +263,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int sleepTime = 4;
+                int sleepTime = 3;
                 for (int i = 0; i < 30; i++) {
                     if (xBreak == (sceneWidth - breakWidth) && direction == RIGHT) {
                         return;
@@ -285,6 +300,9 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         ball = new Circle();
         ball.setRadius(ballRadius);
         ball.setFill(new ImagePattern(new Image("ball.png")));
+
+        xBall = xBreak + (breakWidth / 2);
+        yBall = yBreak - ballRadius - 40;
     }
 
     private void initBreak() {
@@ -441,7 +459,16 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         }
 
         if (colideToLeftBlock) {
-            goRightBall = true;
+            goRightBall = false;
+
+            // Handle bottom-left corner of the block
+            if (colideToBottomBlock) {
+                double cornerDistance = Math.sqrt(Math.pow(xBall - xBreak, 2) + Math.pow(yBall - yBreak - breakHeight, 2));
+                if (cornerDistance <= ballRadius) {
+                    vX = -Math.abs(vX);  // Rebound to the left
+                    vY = Math.abs(vY);   // Rebound downward
+                }
+            }
         }
 
         if (colideToTopBlock) {
@@ -616,6 +643,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     chocos.clear();
                     destroyedBlockCount = 0;
                     start(primaryStage);
+
 
 
                 } catch (Exception e) {
