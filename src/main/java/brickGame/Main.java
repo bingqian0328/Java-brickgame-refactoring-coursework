@@ -30,7 +30,6 @@ import java.util.Random;
 
 public class Main extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
 
-
     private int level = 0;
 
     private double xBreak = 0.0f;
@@ -62,7 +61,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private double v = 1.000;
 
-    private int  heart    = 20000;
+    private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -289,14 +288,10 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }).start();
 
-
     }
 
 
     private void initBall() {
-        Random random = new Random();
-        xBall = random.nextInt(sceneWidth) + 1;
-        yBall = random.nextInt(sceneHeigt - 200) + ((level + 1) * Block.getHeight()) + 15;
         ball = new Circle();
         ball.setRadius(ballRadius);
         ball.setFill(new ImagePattern(new Image("ball.png")));
@@ -752,6 +747,9 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     }
 
                 }
+
+                if (destroyedBlockCount == blocks.size()) {
+                    nextLevel();}
 
                 //TODO hit to break and some work here....
                 //System.out.println("Break in row:" + block.row + " and column:" + block.column + " hit");
