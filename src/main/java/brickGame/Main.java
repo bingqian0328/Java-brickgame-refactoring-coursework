@@ -51,6 +51,9 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private double xBall;
     private double yBall;
 
+    private Ball bball;
+    private Paddle paddle;
+
     private boolean isGoldStauts      = false;
     private boolean isExistHeartBlock = false;
 
@@ -256,26 +259,25 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         }
     }
 
-    float oldXBreak;
-
     private void move(final int direction) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 int sleepTime = 3;
                 for (int i = 0; i < 30; i++) {
-                    if (xBreak == (sceneWidth - breakWidth) && direction == RIGHT) {
+                    if (paddle.getX() == (sceneWidth - paddle.getWidth()) && direction == RIGHT) {
                         return;
                     }
-                    if (xBreak == 0 && direction == LEFT) {
+                    if (paddle.getX() == 0 && direction == LEFT) {
                         return;
                     }
                     if (direction == RIGHT) {
-                        xBreak++;
+                        paddle.setX(paddle.getX() + 1);
+                        paddle.setCenterX(paddle.getX() + paddle.getHalfWidth());
                     } else {
-                        xBreak--;
+                        paddle.setX(paddle.getX() - 1);
+                        paddle.setCenterX(paddle.getX() + paddle.getHalfWidth());
                     }
-                    centerBreakX = xBreak + halfBreakWidth;
                     try {
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException e) {
@@ -287,7 +289,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 }
             }
         }).start();
-
     }
 
 
@@ -298,6 +299,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         xBall = xBreak + (breakWidth / 2);
         yBall = yBreak - ballRadius - 40;
+        bball = new Ball(xBall,yBall,ballRadius);
     }
 
     private void initBreak() {
@@ -310,6 +312,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
 
         rect.setFill(pattern);
+        paddle = new Paddle(0, 640, 130, 30);
+
     }
 
 
@@ -336,146 +340,143 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private double vY = 1.000;
 
 
-    private void resetColideFlags() {
+    private void setPhysicsToBall() {
+        moveBall();
+        checkTopAndBottomBoundaries();
+        checkBreakCollision();
+        checkWallCollision();
+        handleBreakAndWallCollisions();
+        checkBlockCollisions();
+        checkTopAndBottomBlockCollisions();
+    }
 
+    private void moveBall() {
+        bball.updatePosition();
+    }
+
+    private void checkTopAndBottomBoundaries() {
+        if (bball.getYb() <= 0) {
+            resetColideFlags();
+            bball.bounceDown();
+        } else if (bball.getYb() >= sceneHeigt) {
+            handleBallOutOfBounds();
+        }
+    }
+
+    private void handleBallOutOfBounds() {
+        resetColideFlags();
+        bball.bounceUp();
+
+        if (!isGoldStauts) {
+            heart--;
+            new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, this);
+
+            if (heart == 0) {
+                new Score().showGameOver(this);
+                engine.stop();
+            }
+        }
+    }
+
+    private void checkBreakCollision() {
+        if (bball.getYb() >= paddle.getY() - bball.getRadius()) {
+            if (bball.getXb() >= paddle.getX() && bball.getXb() <= paddle.getX() + paddle.getWidth()) {
+                handleBreakCollision();
+            }
+        }
+    }
+
+    private void handleBreakCollision() {
+        hitTime = time;
+        resetColideFlags();
+        colideToBreak = true;
+        bball.bounceUp();
+
+        double relation = (bball.getXb() - paddle.getCenterX()) / (paddle.getWidth()/ 2);
+
+        if (Math.abs(relation) <= 0.3) {
+            bball.setVeloX(Math.abs(relation));
+        } else if (Math.abs(relation) > 0.3 && Math.abs(relation) <= 0.7) {
+            bball.setVeloX((Math.abs(relation) * 1.5) + (level / 3.500));
+        } else {
+            bball.setVeloX((Math.abs(relation) * 2) + (level / 3.500));
+        }
+
+        if (bball.getXb() - paddle.getCenterX() > 0) {
+            colideToBreakAndMoveToRight = true;
+        } else {
+            colideToBreakAndMoveToRight = false;
+        }
+    }
+
+    private void checkWallCollision() {
+        if (bball.getXb() >= sceneWidth) {
+            resetColideFlags();
+            colideToRightWall = true;
+        } else if (bball.getXb() <= 0) {
+            resetColideFlags();
+            colideToLeftWall = true;
+        }
+    }
+
+    private void handleBreakAndWallCollisions() {
+        if (colideToBreak) {
+            bball.setGoingRight(colideToBreakAndMoveToRight);
+        }
+
+        if (colideToRightWall) {
+            bball.setGoingRight(false);
+        }
+
+        if (colideToLeftWall) {
+            bball.setGoingRight(true);
+        }
+    }
+
+    private void checkBlockCollisions() {
+        if (colideToRightBlock) {
+            bball.setGoingRight(true);
+        } else if (colideToLeftBlock) {
+            handleLeftBlockCollision();
+        }
+    }
+
+    private void handleLeftBlockCollision() {
+        bball.setGoingRight(false);
+
+        if (colideToBottomBlock) {
+            handleBottomLeftBlockCorner();
+        }
+    }
+
+    private void handleBottomLeftBlockCorner() {
+        double cornerDistance = Math.sqrt(Math.pow(bball.getXb() - paddle.getX(), 2) + Math.pow(bball.getYb() - paddle.getY() - paddle.getHeight(), 2));
+        if (cornerDistance <= bball.getRadius()) {
+            bball.bounceHorizontally();
+            bball.bounceDown();
+        }
+    }
+
+    private void checkTopAndBottomBlockCollisions() {
+        if (colideToTopBlock) {
+            bball.setGoingDown(false);
+        } else if (colideToBottomBlock) {
+            bball.setGoingDown(true);
+        }
+    }
+
+    private void resetColideFlags() {
         colideToBreak = false;
         colideToBreakAndMoveToRight = false;
         colideToRightWall = false;
         colideToLeftWall = false;
-
         colideToRightBlock = false;
-        colideToBottomBlock = false;
         colideToLeftBlock = false;
         colideToTopBlock = false;
+        colideToBottomBlock = false;
     }
 
-    private void setPhysicsToBall() {
-        //v = ((time - hitTime) / 1000.000) + 1.000;
 
-        if (goDownBall) {
-            yBall += vY;
-        } else {
-            yBall -= vY;
-        }
-
-        if (goRightBall) {
-            xBall += vX;
-        } else {
-            xBall -= vX;
-        }
-
-        if (yBall <= 0) {
-            //vX = 1.000;
-            resetColideFlags();
-            goDownBall = true;
-            return;
-        }
-        if (yBall >= sceneHeigt) {
-            resetColideFlags();
-            goDownBall = false;
-            if (!isGoldStauts) {
-                //TODO gameover
-                heart--;
-                new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, this);
-
-                if (heart == 0) {
-                    new Score().showGameOver(this);
-                    engine.stop();
-                }
-
-            }
-            //return;
-        }
-
-        if (yBall >= yBreak - ballRadius) {
-            //System.out.println("Colide1");
-            if (xBall >= xBreak && xBall <= xBreak + breakWidth) {
-                hitTime = time;
-                resetColideFlags();
-                colideToBreak = true;
-                goDownBall = false;
-
-                double relation = (xBall - centerBreakX) / (breakWidth / 2);
-
-                if (Math.abs(relation) <= 0.3) {
-                    //vX = 0;
-                    vX = Math.abs(relation);
-                } else if (Math.abs(relation) > 0.3 && Math.abs(relation) <= 0.7) {
-                    vX = (Math.abs(relation) * 1.5) + (level / 3.500);
-                    //System.out.println("vX " + vX);
-                } else {
-                    vX = (Math.abs(relation) * 2) + (level / 3.500);
-                    //System.out.println("vX " + vX);
-                }
-
-                if (xBall - centerBreakX > 0) {
-                    colideToBreakAndMoveToRight = true;
-                } else {
-                    colideToBreakAndMoveToRight = false;
-                }
-                //System.out.println("Colide2");
-            }
-        }
-
-        if (xBall >= sceneWidth) {
-            resetColideFlags();
-            //vX = 1.000;
-            colideToRightWall = true;
-        }
-
-        if (xBall <= 0) {
-            resetColideFlags();
-            //vX = 1.000;
-            colideToLeftWall = true;
-        }
-
-        if (colideToBreak) {
-            if (colideToBreakAndMoveToRight) {
-                goRightBall = true;
-            } else {
-                goRightBall = false;
-            }
-        }
-
-        //Wall Colide
-
-        if (colideToRightWall) {
-            goRightBall = false;
-        }
-
-        if (colideToLeftWall) {
-            goRightBall = true;
-        }
-
-        //Block Colide
-
-        if (colideToRightBlock) {
-            goRightBall = true;
-        }
-
-        if (colideToLeftBlock) {
-            goRightBall = false;
-
-            // Handle bottom-left corner of the block
-            if (colideToBottomBlock) {
-                double cornerDistance = Math.sqrt(Math.pow(xBall - xBreak, 2) + Math.pow(yBall - yBreak - breakHeight, 2));
-                if (cornerDistance <= ballRadius) {
-                    vX = -Math.abs(vX);  // Rebound to the left
-                    vY = Math.abs(vY);   // Rebound downward
-                }
-            }
-        }
-
-        if (colideToTopBlock) {
-            goDownBall = false;
-        }
-
-        if (colideToBottomBlock) {
-            goDownBall = true;
-        }
-
-
-    }
 
 
     private void checkDestroyedCount() {
@@ -686,10 +687,10 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 scoreLabel.setText("Score: " + score);
                 heartLabel.setText("Heart : " + heart);
 
-                rect.setX(xBreak);
-                rect.setY(yBreak);
-                ball.setCenterX(xBall);
-                ball.setCenterY(yBall);
+                rect.setX(paddle.getX());
+                rect.setY(paddle.getY());
+                ball.setCenterX(bball.getXb());
+                ball.setCenterY(bball.getYb());
 
                 for (Bonus choco : chocos) {
                     choco.choco.setY(choco.y);
@@ -698,9 +699,9 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         });
 
-        if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+        if (bball.getYb() >= Block.getPaddingTop() && bball.getYb() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
             for (final Block block : blocks) {
-                int hitCode = block.checkHitToBlock(xBall, yBall,goRightBall,goDownBall);
+                int hitCode = block.checkHitToBlock(bball.getXb(), bball.getYb(),goRightBall,goDownBall);
                 if (hitCode != Block.NO_HIT) {
                     score += 1;
 
@@ -779,7 +780,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             if (choco.y > sceneHeigt || choco.taken) {
                 continue;
             }
-            if (choco.y >= yBreak && choco.y <= yBreak + breakHeight && choco.x >= xBreak && choco.x <= xBreak + breakWidth) {
+            if (choco.y >= paddle.getY() && choco.y <= paddle.getY() + paddle.getHeight() && choco.x >= paddle.getX() && choco.x <= paddle.getX() + paddle.getWidth()) {
                 System.out.println("You Got it and +3 score for you");
                 choco.taken = true;
                 choco.choco.setVisible(false);
