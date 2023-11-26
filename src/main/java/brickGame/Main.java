@@ -266,27 +266,24 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private boolean colideToLeftBlock           = false;
     private boolean colideToTopBlock            = false;
 
+
     private double vX = 1.000;
     private double vY = 1.000;
 
 
     private void setPhysicsToBall() {
-        moveBall();
-        checkTopAndBottomBoundaries();
-        checkBreakCollision();
-        checkWallCollision();
-        handleBreakAndWallCollisions();
-        checkBlockCollisions();
-        checkTopAndBottomBlockCollisions();
-    }
-
-    private void moveBall() {
         bball.updatePosition();
+        checkTopAndBottomBoundaries();
+        model.checkBreakCollision(level, paddle, bball);
+        model.checkWallCollision(bball,sceneWidth);
+        model.handleBreakAndWallCollisions(bball);
+        model.checkBlockCollisions(bball);
+        model.checkTopAndBottomBlockCollisions(bball);
     }
 
     private void checkTopAndBottomBoundaries() {
         if (bball.getYb() <= 0) {
-            resetColideFlags();
+            model.resetColideFlags();
             bball.bounceDown();
         } else if (bball.getYb() >= sceneHeigt) {
             handleBallOutOfBounds();
@@ -294,7 +291,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
     private void handleBallOutOfBounds() {
-        resetColideFlags();
+        model.resetColideFlags();
         bball.bounceUp();
 
         if (!isGoldStauts) {
@@ -307,107 +304,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
     }
-
-    private void checkBreakCollision() {
-        if (bball.getYb() >= paddle.getY() - bball.getRadius()) {
-            if (bball.getXb() >= paddle.getX() && bball.getXb() <= paddle.getX() + paddle.getWidth()) {
-                handleBreakCollision();
-            }
-        }
-    }
-
-    private void handleBreakCollision() {
-        hitTime = time;
-        resetColideFlags();
-        colideToBreak = true;
-        bball.bounceUp();
-
-        double relation = (bball.getXb() - paddle.getCenterX()) / (paddle.getWidth()/ 2);
-
-        if (Math.abs(relation) <= 0.3) {
-            bball.setVeloX(Math.abs(relation));
-        } else if (Math.abs(relation) > 0.3 && Math.abs(relation) <= 0.7) {
-            bball.setVeloX((Math.abs(relation) * 1.5) + (level / 3.500));
-        } else {
-            bball.setVeloX((Math.abs(relation) * 2) + (level / 3.500));
-        }
-
-        if (bball.getXb() - paddle.getCenterX() > 0) {
-            colideToBreakAndMoveToRight = true;
-        } else {
-            colideToBreakAndMoveToRight = false;
-        }
-    }
-
-    private void checkWallCollision() {
-        if (bball.getXb() >= sceneWidth) {
-            resetColideFlags();
-            colideToRightWall = true;
-        } else if (bball.getXb() <= 0) {
-            resetColideFlags();
-            colideToLeftWall = true;
-        }
-    }
-
-    private void handleBreakAndWallCollisions() {
-        if (colideToBreak) {
-            bball.setGoingRight(colideToBreakAndMoveToRight);
-        }
-
-        if (colideToRightWall) {
-            bball.setGoingRight(false);
-        }
-
-        if (colideToLeftWall) {
-            bball.setGoingRight(true);
-        }
-    }
-
-    private void checkBlockCollisions() {
-        if (colideToRightBlock) {
-            bball.setGoingRight(true);
-        } else if (colideToLeftBlock) {
-            handleLeftBlockCollision();
-        }
-    }
-
-    private void handleLeftBlockCollision() {
-        bball.setGoingRight(false);
-
-        if (colideToBottomBlock) {
-            handleBottomLeftBlockCorner();
-        }
-    }
-
-    private void handleBottomLeftBlockCorner() {
-        double cornerDistance = Math.sqrt(Math.pow(bball.getXb() - paddle.getX(), 2) + Math.pow(bball.getYb() - paddle.getY() - paddle.getHeight(), 2));
-        if (cornerDistance <= bball.getRadius()) {
-            bball.bounceHorizontally();
-            bball.bounceDown();
-        }
-    }
-
-    private void checkTopAndBottomBlockCollisions() {
-        if (colideToTopBlock) {
-            bball.setGoingDown(false);
-        } else if (colideToBottomBlock) {
-            bball.setGoingDown(true);
-        }
-    }
-
-    private void resetColideFlags() {
-        colideToBreak = false;
-        colideToBreakAndMoveToRight = false;
-        colideToRightWall = false;
-        colideToLeftWall = false;
-        colideToRightBlock = false;
-        colideToLeftBlock = false;
-        colideToTopBlock = false;
-        colideToBottomBlock = false;
-    }
-
-
-
 
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
@@ -448,14 +344,14 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     outputStream.writeBoolean(isGoldStauts);
                     outputStream.writeBoolean(goDownBall);
                     outputStream.writeBoolean(goRightBall);
-                    outputStream.writeBoolean(colideToBreak);
-                    outputStream.writeBoolean(colideToBreakAndMoveToRight);
-                    outputStream.writeBoolean(colideToRightWall);
-                    outputStream.writeBoolean(colideToLeftWall);
-                    outputStream.writeBoolean(colideToRightBlock);
-                    outputStream.writeBoolean(colideToBottomBlock);
-                    outputStream.writeBoolean(colideToLeftBlock);
-                    outputStream.writeBoolean(colideToTopBlock);
+                    outputStream.writeBoolean(model.isColideToBreak());
+                    outputStream.writeBoolean(model.isColideToBreakAndMoveToRight());
+                    outputStream.writeBoolean(model.isColideToRightWall());
+                    outputStream.writeBoolean(model.isColideToLeftWall());
+                    outputStream.writeBoolean(model.isColideToRightBlock());
+                    outputStream.writeBoolean(model.isColideToBottomBlock());
+                    outputStream.writeBoolean(model.isColideToLeftBlock());
+                    outputStream.writeBoolean(model.isColideToTopBlock());
 
                     ArrayList<BlockSerializable> blockSerializables = new ArrayList<BlockSerializable>();
                     for (Block block : blocks) {
@@ -497,14 +393,14 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         isGoldStauts = loadSave.isGoldStauts;
         goDownBall = loadSave.goDownBall;
         goRightBall = loadSave.goRightBall;
-        colideToBreak = loadSave.colideToBreak;
-        colideToBreakAndMoveToRight = loadSave.colideToBreakAndMoveToRight;
-        colideToRightWall = loadSave.colideToRightWall;
-        colideToLeftWall = loadSave.colideToLeftWall;
-        colideToRightBlock = loadSave.colideToRightBlock;
-        colideToBottomBlock = loadSave.colideToBottomBlock;
-        colideToLeftBlock = loadSave.colideToLeftBlock;
-        colideToTopBlock = loadSave.colideToTopBlock;
+        model.setColideToBreak(loadSave.colideToBreak);
+        model.setColideToBreakAndMoveToRight(loadSave.colideToBreakAndMoveToRight);
+        model.setColideToRightWall(loadSave.colideToRightWall);
+        model.setColideToLeftWall(loadSave.colideToLeftWall);
+        model.setColideToRightBlock(loadSave.colideToRightBlock);
+        model.setColideToBottomBlock(loadSave.colideToBottomBlock);
+        model.setColideToLeftBlock(loadSave.colideToLeftBlock);
+        model.setColideToTopBlock(loadSave.colideToTopBlock);
         level = loadSave.level;
         score = loadSave.score;
         heart = loadSave.heart;
@@ -553,7 +449,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     vX = 1.000;
 
                     engine.stop();
-                    resetColideFlags();
+                    model.resetColideFlags();
                     goDownBall = true;
 
                     isGoldStauts = false;
@@ -589,7 +485,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             score = 0;
             vX = 1.000;
             destroyedBlockCount = 0;
-            resetColideFlags();
+            model.resetColideFlags();
             goDownBall = true;
 
             isGoldStauts = false;
@@ -641,7 +537,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     block.isDestroyed = true;
                     destroyedBlockCount++;
                     //System.out.println("size is " + blocks.size());
-                    resetColideFlags();
+                    model.resetColideFlags();
 
                     if (block.type == Block.BLOCK_CHOCO) {
                         final Bonus choco = new Bonus(block.row, block.column);
@@ -668,13 +564,13 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     }
 
                     if (hitCode == Block.HIT_RIGHT) {
-                        colideToRightBlock = true;
+                        model.setColideToRightBlock(true);
                     } else if (hitCode == Block.HIT_BOTTOM) {
-                        colideToBottomBlock = true;
+                        model.setColideToBottomBlock(true);
                     } else if (hitCode == Block.HIT_LEFT) {
-                        colideToLeftBlock = true;
+                        model.setColideToLeftBlock(true);
                     } else if (hitCode == Block.HIT_TOP) {
-                        colideToTopBlock = true;
+                        model.setColideToTopBlock(true);
                     }
 
                 }

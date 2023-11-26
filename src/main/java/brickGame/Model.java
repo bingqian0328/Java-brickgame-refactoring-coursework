@@ -45,7 +45,7 @@ public class Model {
 
     private long hitTime = 0;
 
-    private long time = 0;
+    private long time = 0 ;
 
     Score score = new Score();
 
@@ -81,9 +81,16 @@ public class Model {
 
     public Model() {
         initBoard(blocks, level,isExistHeartBlock);
+        bball = new Ball(xBall, yBall, ballRadius);
         bball =initBall();
         paddle = initBreak();
         this.ball = ball;
+        checkBreakCollision(level, paddle, bball);
+        checkWallCollision(bball,sceneWidth);
+        handleBreakAndWallCollisions(bball);
+        checkBlockCollisions(bball);
+        checkTopAndBottomBlockCollisions(bball);
+        resetColideFlags();
     }
 
     public void initBoard(ArrayList<Block> blocks, int level,boolean isExistHeartBlock) {
@@ -139,8 +146,91 @@ public class Model {
         rect.setY(yBreak);
     }
 
+    public void checkBreakCollision(int level, Paddle paddle, Ball bball) {
+        if (bball.getYb() >= paddle.getY() - bball.getRadius()) {
+            if (bball.getXb() >= paddle.getX() && bball.getXb() <= paddle.getX() + paddle.getWidth()) {
+                handleBreakCollision(level, paddle,bball);
+            }
+        }
+    }
 
+    private void handleBreakCollision(int level, Paddle paddle, Ball bball) {
+        resetColideFlags();
+        colideToBreak = true;
+        bball.bounceUp();
 
+        double relation = (bball.getXb() - paddle.getCenterX()) / (paddle.getWidth()/ 2);
+
+        if (Math.abs(relation) <= 0.3) {
+            bball.setVeloX(Math.abs(relation));
+        } else if (Math.abs(relation) > 0.3 && Math.abs(relation) <= 0.7) {
+            bball.setVeloX((Math.abs(relation) * 1.5) + (level / 3.500));
+        } else {
+            bball.setVeloX((Math.abs(relation) * 2) + (level / 3.500));
+        }
+
+        if (bball.getXb() - paddle.getCenterX() > 0) {
+            colideToBreakAndMoveToRight = true;
+        } else {
+            colideToBreakAndMoveToRight = false;
+        }
+    }
+
+    public void checkWallCollision(Ball bball,int sceneWidth) {
+        if (bball.getXb() >= sceneWidth) {
+            resetColideFlags();
+            colideToRightWall = true;
+        } else if (bball.getXb() <= 0) {
+            resetColideFlags();
+            colideToLeftWall = true;
+        }
+    }
+
+    public void handleBreakAndWallCollisions(Ball bball) {
+        if (colideToBreak) {
+            bball.setGoingRight(colideToBreakAndMoveToRight);
+        }
+
+        if (colideToRightWall) {
+            bball.setGoingRight(false);
+        }
+
+        if (colideToLeftWall) {
+            bball.setGoingRight(true);
+        }
+    }
+
+    public void checkBlockCollisions(Ball bball) {
+        if (colideToRightBlock) {
+            bball.setGoingRight(true);
+        } else if (colideToLeftBlock) {
+            handleLeftBlockCollision(bball);
+        }
+    }
+
+    public void handleLeftBlockCollision(Ball bball) {
+        bball.setGoingRight(false);
+
+        if (colideToBottomBlock) {
+            handleBottomLeftBlockCorner(bball, paddle);
+        }
+    }
+
+    public void handleBottomLeftBlockCorner(Ball bball, Paddle paddle) {
+        double cornerDistance = Math.sqrt(Math.pow(bball.getXb() - paddle.getX(), 2) + Math.pow(bball.getYb() - paddle.getY() - paddle.getHeight(), 2));
+        if (cornerDistance <= bball.getRadius()) {
+            bball.bounceHorizontally();
+            bball.bounceDown();
+        }
+    }
+
+    public void checkTopAndBottomBlockCollisions( Ball bball) {
+        if (colideToTopBlock) {
+            bball.setGoingDown(false);
+        } else if (colideToBottomBlock) {
+            bball.setGoingDown(true);
+        }
+    }
 
         public void resetColideFlags() {
             colideToBreak = false;
@@ -177,6 +267,83 @@ public class Model {
     public void setRect(Rectangle rect) {
         this.rect = rect;
     }
+        // ... existing code ...
+
+        // Getter and Setter for colideToBreak
+        public boolean isColideToBreak() {
+            return colideToBreak;
+        }
+
+        public void setColideToBreak(boolean colideToBreak) {
+            this.colideToBreak = colideToBreak;
+        }
+
+        // Getter and Setter for colideToBreakAndMoveToRight
+        public boolean isColideToBreakAndMoveToRight() {
+            return colideToBreakAndMoveToRight;
+        }
+
+        public void setColideToBreakAndMoveToRight(boolean colideToBreakAndMoveToRight) {
+            this.colideToBreakAndMoveToRight = colideToBreakAndMoveToRight;
+        }
+
+        // Getter and Setter for colideToRightWall
+        public boolean isColideToRightWall() {
+            return colideToRightWall;
+        }
+
+        public void setColideToRightWall(boolean colideToRightWall) {
+            this.colideToRightWall = colideToRightWall;
+        }
+
+        // Getter and Setter for colideToLeftWall
+        public boolean isColideToLeftWall() {
+            return colideToLeftWall;
+        }
+
+        public void setColideToLeftWall(boolean colideToLeftWall) {
+            this.colideToLeftWall = colideToLeftWall;
+        }
+
+        // Getter and Setter for colideToRightBlock
+        public boolean isColideToRightBlock() {
+            return colideToRightBlock;
+        }
+
+        public void setColideToRightBlock(boolean colideToRightBlock) {
+            this.colideToRightBlock = colideToRightBlock;
+        }
+
+        // Getter and Setter for colideToBottomBlock
+        public boolean isColideToBottomBlock() {
+            return colideToBottomBlock;
+        }
+
+        public void setColideToBottomBlock(boolean colideToBottomBlock) {
+            this.colideToBottomBlock = colideToBottomBlock;
+        }
+
+        // Getter and Setter for colideToLeftBlock
+        public boolean isColideToLeftBlock() {
+            return colideToLeftBlock;
+        }
+
+        public void setColideToLeftBlock(boolean colideToLeftBlock) {
+            this.colideToLeftBlock = colideToLeftBlock;
+        }
+
+        // Getter and Setter for colideToTopBlock
+        public boolean isColideToTopBlock() {
+            return colideToTopBlock;
+        }
+
+        public void setColideToTopBlock(boolean colideToTopBlock) {
+            this.colideToTopBlock = colideToTopBlock;
+        }
+
+        // ... existing code ...
+
+
 
 
 
