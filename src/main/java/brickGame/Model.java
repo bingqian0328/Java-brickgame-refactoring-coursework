@@ -103,7 +103,7 @@ public class Model {
         checkTopAndBottomBlockCollisions(bball);
         resetColideFlags();
         resetGame(bball);
-        resetGameParameters(level);
+        resetGameParameters();
     }
 
     public void initBoard(ArrayList<Block> blocks, int level,boolean isExistHeartBlock) {
@@ -245,26 +245,26 @@ public class Model {
         }
     }
 
-        public void resetColideFlags() {
-            colideToBreak = false;
-            colideToBreakAndMoveToRight = false;
-            colideToRightWall = false;
-            colideToLeftWall = false;
-            colideToRightBlock = false;
-            colideToLeftBlock = false;
-            colideToTopBlock = false;
-            colideToBottomBlock = false;
-        }
+    public void resetColideFlags() {
+        colideToBreak = false;
+        colideToBreakAndMoveToRight = false;
+        colideToRightWall = false;
+        colideToLeftWall = false;
+        colideToRightBlock = false;
+        colideToLeftBlock = false;
+        colideToTopBlock = false;
+        colideToBottomBlock = false;
+    }
 
-        public void checktransition()
+    public void checktransition()
+    {
+        if (checktransition)
         {
-            if (checktransition)
-            {
-                return;
-            }
-
-            checktransition = true;
+            return;
         }
+
+        checktransition = true;
+    }
 
     public void resetGame(Ball bball)
     {
@@ -280,11 +280,11 @@ public class Model {
         destroyedBlockCount = 0;
     }
 
-    public void resetGameParameters(int level) {
-        this.level = 0;
-        heart = 3;
+    public void resetGameParameters() {
+        level = 0;
+        heart = 1;
         score = 0;
-        vX = 1.000;
+        bball.setXb(1.000);
         destroyedBlockCount = 0;
         resetColideFlags();
         goDownBall = true;
@@ -322,86 +322,86 @@ public class Model {
     }
 
 
-        // Getter and Setter for colideToBreak
-        public boolean isColideToBreak() {
-            return colideToBreak;
-        }
+    // Getter and Setter for colideToBreak
+    public boolean isColideToBreak() {
+        return colideToBreak;
+    }
 
-        public void setColideToBreak(boolean colideToBreak) {
-            this.colideToBreak = colideToBreak;
-        }
+    public void setColideToBreak(boolean colideToBreak) {
+        this.colideToBreak = colideToBreak;
+    }
 
-        // Getter and Setter for colideToBreakAndMoveToRight
-        public boolean isColideToBreakAndMoveToRight() {
-            return colideToBreakAndMoveToRight;
-        }
+    // Getter and Setter for colideToBreakAndMoveToRight
+    public boolean isColideToBreakAndMoveToRight() {
+        return colideToBreakAndMoveToRight;
+    }
 
-        public void setColideToBreakAndMoveToRight(boolean colideToBreakAndMoveToRight) {
-            this.colideToBreakAndMoveToRight = colideToBreakAndMoveToRight;
-        }
+    public void setColideToBreakAndMoveToRight(boolean colideToBreakAndMoveToRight) {
+        this.colideToBreakAndMoveToRight = colideToBreakAndMoveToRight;
+    }
 
-        // Getter and Setter for colideToRightWall
-        public boolean isColideToRightWall() {
-            return colideToRightWall;
-        }
+    // Getter and Setter for colideToRightWall
+    public boolean isColideToRightWall() {
+        return colideToRightWall;
+    }
 
-        public void setColideToRightWall(boolean colideToRightWall) {
-            this.colideToRightWall = colideToRightWall;
-        }
+    public void setColideToRightWall(boolean colideToRightWall) {
+        this.colideToRightWall = colideToRightWall;
+    }
 
-        // Getter and Setter for colideToLeftWall
-        public boolean isColideToLeftWall() {
-            return colideToLeftWall;
-        }
+    // Getter and Setter for colideToLeftWall
+    public boolean isColideToLeftWall() {
+        return colideToLeftWall;
+    }
 
-        public void setColideToLeftWall(boolean colideToLeftWall) {
-            this.colideToLeftWall = colideToLeftWall;
-        }
+    public void setColideToLeftWall(boolean colideToLeftWall) {
+        this.colideToLeftWall = colideToLeftWall;
+    }
 
-        // Getter and Setter for colideToRightBlock
-        public boolean isColideToRightBlock() {
-            return colideToRightBlock;
-        }
+    // Getter and Setter for colideToRightBlock
+    public boolean isColideToRightBlock() {
+        return colideToRightBlock;
+    }
 
-        public void setColideToRightBlock(boolean colideToRightBlock) {
-            this.colideToRightBlock = colideToRightBlock;
-        }
+    public void setColideToRightBlock(boolean colideToRightBlock) {
+        this.colideToRightBlock = colideToRightBlock;
+    }
 
-        // Getter and Setter for colideToBottomBlock
-        public boolean isColideToBottomBlock() {
-            return colideToBottomBlock;
-        }
+    // Getter and Setter for colideToBottomBlock
+    public boolean isColideToBottomBlock() {
+        return colideToBottomBlock;
+    }
 
-        public void setColideToBottomBlock(boolean colideToBottomBlock) {
-            this.colideToBottomBlock = colideToBottomBlock;
-        }
+    public void setColideToBottomBlock(boolean colideToBottomBlock) {
+        this.colideToBottomBlock = colideToBottomBlock;
+    }
 
-        // Getter and Setter for colideToLeftBlock
-        public boolean isColideToLeftBlock() {
-            return colideToLeftBlock;
-        }
+    // Getter and Setter for colideToLeftBlock
+    public boolean isColideToLeftBlock() {
+        return colideToLeftBlock;
+    }
 
-        public void setColideToLeftBlock(boolean colideToLeftBlock) {
-            this.colideToLeftBlock = colideToLeftBlock;
-        }
+    public void setColideToLeftBlock(boolean colideToLeftBlock) {
+        this.colideToLeftBlock = colideToLeftBlock;
+    }
 
-        // Getter and Setter for colideToTopBlock
-        public boolean isColideToTopBlock() {
-            return colideToTopBlock;
-        }
+    // Getter and Setter for colideToTopBlock
+    public boolean isColideToTopBlock() {
+        return colideToTopBlock;
+    }
 
-        public void setColideToTopBlock(boolean colideToTopBlock) {
-            this.colideToTopBlock = colideToTopBlock;
-        }
+    public void setColideToTopBlock(boolean colideToTopBlock) {
+        this.colideToTopBlock = colideToTopBlock;
+    }
 
-        public boolean isChecktransition (){
-            return checktransition;
-        }
+    public boolean isChecktransition (){
+        return checktransition;
+    }
 
-        public void setChecktransition (boolean checktransition)
-        {
-            this.checktransition = checktransition;
-        }
+    public void setChecktransition (boolean checktransition)
+    {
+        this.checktransition = checktransition;
+    }
 
     public long getGoldTime() {
         return goldTime;
@@ -483,6 +483,31 @@ public class Model {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getHeart() {
+        return heart;
+    }
+
+    public void setHeart(int heart) {
+        this.heart = heart;
+    }
+
+    public int getScore()
+    {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
 

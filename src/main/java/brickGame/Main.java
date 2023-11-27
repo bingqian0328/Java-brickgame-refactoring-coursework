@@ -54,7 +54,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
-    private long hitTime  = 0;
     private long goldTime = 0;
 
     private Label countdownLabel;
@@ -434,56 +433,57 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
     private void nextLevel() {
-            if (checktransition)
-            {
-                return;
-            }
 
-            checktransition = true;
+        if (checktransition)
+        {
+            return;
+        }
+
+        checktransition = true;
         Platform.runLater(new Runnable() {
+
             @Override
             public void run() {
                 try {
-                    model.resetGame(bball);
+                    vX = 1.000;
+
                     engine.stop();
+                    model.resetColideFlags();
+                    goDownBall = true;
+
+                    isGoldStauts = false;
+                    isExistHeartBlock = false;
+
+                    time = 0;
+                    goldTime = 0;
+
+                    engine.stop();
+                    blocks.clear();
+                    chocos.clear();
+                    destroyedBlockCount = 0;
                     start(primaryStage);
+
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }finally {
-                    checktransition=false;
+                    checktransition = false;
                 }
             }
         });
     }
 
     public void restartGame() {
-
         try {
-            resetGameParameters();
+            level = model.getLevel();
+            score = model.getScore();
+            model.resetGameParameters();
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void resetGameParameters() {
-        level = 0;
-        heart = 3;
-        score = 0;
-        vX = 1.000;
-        destroyedBlockCount = 0;
-        model.resetColideFlags();
-        goDownBall = true;
-        isGoldStauts = false;
-        isExistHeartBlock = false;
-        hitTime = 0;
-        time = 0;
-        goldTime = 0;
-        blocks.clear();
-        chocos.clear();
-    }
-
     @Override
     public void onUpdate() {
         Platform.runLater(new Runnable() {
@@ -567,7 +567,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     @Override
     public void onInit() {
-
     }
 
     @Override
@@ -599,8 +598,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         //System.out.println("time is:" + time + " goldTime is " + goldTime);
 
     }
-
-
     @Override
     public void onTime(long time) {
         this.time = time;
