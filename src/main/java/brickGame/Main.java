@@ -51,7 +51,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private double v = 1.000;
 
-    private int  heart    = 3;
+    private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
     private long hitTime  = 0;
@@ -434,44 +434,24 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
     private void nextLevel() {
+            if (checktransition)
+            {
+                return;
+            }
 
-        if (checktransition)
-        {
-            return;
-        }
-
-        checktransition = true;
+            checktransition = true;
         Platform.runLater(new Runnable() {
-
             @Override
             public void run() {
                 try {
-                    vX = 1.000;
-
+                    model.resetGame(bball);
                     engine.stop();
-                    model.resetColideFlags();
-                    goDownBall = true;
-
-                    isGoldStauts = false;
-                    isExistHeartBlock = false;
-
-
-                    hitTime = 0;
-                    time = 0;
-                    goldTime = 0;
-
-                    engine.stop();
-                    blocks.clear();
-                    chocos.clear();
-                    destroyedBlockCount = 0;
                     start(primaryStage);
-
-
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }finally {
-                    checktransition = false;
+                    checktransition=false;
                 }
             }
         });
@@ -480,29 +460,29 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     public void restartGame() {
 
         try {
-            level = 0;
-            heart = 3;
-            score = 0;
-            vX = 1.000;
-            destroyedBlockCount = 0;
-            model.resetColideFlags();
-            goDownBall = true;
-
-            isGoldStauts = false;
-            isExistHeartBlock = false;
-            hitTime = 0;
-            time = 0;
-            goldTime = 0;
-
-            blocks.clear();
-            chocos.clear();
-
+            resetGameParameters();
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void resetGameParameters() {
+        level = 0;
+        heart = 3;
+        score = 0;
+        vX = 1.000;
+        destroyedBlockCount = 0;
+        model.resetColideFlags();
+        goDownBall = true;
+        isGoldStauts = false;
+        isExistHeartBlock = false;
+        hitTime = 0;
+        time = 0;
+        goldTime = 0;
+        blocks.clear();
+        chocos.clear();
+    }
 
     @Override
     public void onUpdate() {

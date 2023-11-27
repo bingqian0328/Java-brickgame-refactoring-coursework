@@ -36,6 +36,8 @@ public class Model {
     private Rectangle rect;
     private int ballRadius = 10;
 
+    private int score = 0;
+
     private ArrayList<Block> blocks = new ArrayList<>();
 
     private boolean isGoldStauts = false;
@@ -46,8 +48,6 @@ public class Model {
     private long hitTime = 0;
 
     private long time = 0 ;
-
-    Score score = new Score();
 
     private int sceneWidth = 500;
 
@@ -60,8 +60,19 @@ public class Model {
     private boolean colideToLeftBlock = false;
     private boolean colideToTopBlock = false;
 
+    private boolean checktransition = false;
+
+    private long goldTime = 0;
+
+    private boolean goDownBall                  = true;
+    private boolean goRightBall                 = true;
+
     private double vX = 1.000;
     private double vY = 1.000;
+
+    private int destroyedBlockCount = 0;
+
+    private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
 
     private Color[]          colors = new Color[]{
             Color.MAGENTA,
@@ -91,6 +102,8 @@ public class Model {
         checkBlockCollisions(bball);
         checkTopAndBottomBlockCollisions(bball);
         resetColideFlags();
+        resetGame(bball);
+        resetGameParameters(level);
     }
 
     public void initBoard(ArrayList<Block> blocks, int level,boolean isExistHeartBlock) {
@@ -243,6 +256,46 @@ public class Model {
             colideToBottomBlock = false;
         }
 
+        public void checktransition()
+        {
+            if (checktransition)
+            {
+                return;
+            }
+
+            checktransition = true;
+        }
+
+    public void resetGame(Ball bball)
+    {
+        bball.setXb(1.000);
+        resetColideFlags();
+        goDownBall = true;
+        isGoldStauts = false;
+        isExistHeartBlock = false;
+        time = 0;
+        goldTime = 0;
+        blocks.clear();
+        chocos.clear();
+        destroyedBlockCount = 0;
+    }
+
+    public void resetGameParameters(int level) {
+        this.level = 0;
+        heart = 3;
+        score = 0;
+        vX = 1.000;
+        destroyedBlockCount = 0;
+        resetColideFlags();
+        goDownBall = true;
+        isGoldStauts = false;
+        isExistHeartBlock = false;
+        hitTime = 0;
+        time = 0;
+        goldTime = 0;
+        blocks.clear();
+        chocos.clear();
+    }
 
 
     private void paddleimg() {
@@ -267,7 +320,7 @@ public class Model {
     public void setRect(Rectangle rect) {
         this.rect = rect;
     }
-        // ... existing code ...
+
 
         // Getter and Setter for colideToBreak
         public boolean isColideToBreak() {
@@ -341,8 +394,96 @@ public class Model {
             this.colideToTopBlock = colideToTopBlock;
         }
 
-        // ... existing code ...
+        public boolean isChecktransition (){
+            return checktransition;
+        }
 
+        public void setChecktransition (boolean checktransition)
+        {
+            this.checktransition = checktransition;
+        }
+
+    public long getGoldTime() {
+        return goldTime;
+    }
+
+    public void setGoldTime(long goldTime) {
+        this.goldTime = goldTime;
+    }
+
+    public boolean isGoDownBall() {
+        return goDownBall;
+    }
+
+    public void setGoDownBall(boolean goDownBall) {
+        this.goDownBall = goDownBall;
+    }
+
+    public boolean isGoRightBall() {
+        return goRightBall;
+    }
+
+    public void setGoRightBall(boolean goRightBall) {
+        this.goRightBall = goRightBall;
+    }
+
+    public double getvX() {
+        return vX;
+    }
+
+    public void setvX(double vX) {
+        this.vX = vX;
+    }
+
+    public double getvY() {
+        return vY;
+    }
+
+    public void setvY(double vY) {
+        this.vY = vY;
+    }
+
+    public int getDestroyedBlockCount() {
+        return destroyedBlockCount;
+    }
+
+    public void setDestroyedBlockCount(int destroyedBlockCount) {
+        this.destroyedBlockCount = destroyedBlockCount;
+    }
+
+    public ArrayList<Bonus> getChocos() {
+        return chocos;
+    }
+
+    public void setChocos(ArrayList<Bonus> chocos) {
+        this.chocos = chocos;
+    }
+
+    public boolean isGoldStauts()
+    {
+        return isGoldStauts;
+    }
+
+    public void setGoldStauts (boolean goldstatus)
+    {
+        this.isGoldStauts = goldstatus;
+    }
+
+    public boolean isExistHeartBlock() {
+        return isExistHeartBlock;
+    }
+
+    public void setExistHeartBlock(boolean existHeartBlock) {
+        isExistHeartBlock = existHeartBlock;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
 
 
 
