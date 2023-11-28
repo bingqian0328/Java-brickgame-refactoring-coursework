@@ -62,6 +62,8 @@ public class Model {
 
     private boolean checktransition = false;
 
+    private double centerBreakX ;
+
     private long goldTime = 0;
 
     private boolean goDownBall                  = true;
@@ -71,6 +73,8 @@ public class Model {
     private double vY = 1.000;
 
     private int destroyedBlockCount = 0;
+
+    private LoadSave loadSave;
 
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
 
@@ -151,12 +155,19 @@ public class Model {
         return new Paddle(0, 640, 130, 30);
     }
 
+    //put into view later
     private void createrect() {
         rect = new Rectangle();
         rect.setWidth(breakWidth);
         rect.setHeight(breakHeight);
         rect.setX(xBreak);
         rect.setY(yBreak);
+    }
+
+    //put into view later
+    private void paddleimg() {
+        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
+        rect.setFill(pattern);
     }
 
     public void checkBreakCollision(int level, Paddle paddle, Ball bball) {
@@ -188,6 +199,7 @@ public class Model {
             colideToBreakAndMoveToRight = false;
         }
     }
+
 
     public void checkWallCollision(Ball bball,int sceneWidth) {
         if (bball.getXb() >= sceneWidth) {
@@ -256,16 +268,6 @@ public class Model {
         colideToBottomBlock = false;
     }
 
-    public void checktransition()
-    {
-        if (checktransition)
-        {
-            return;
-        }
-
-        checktransition = true;
-    }
-
     public void resetGame(Ball bball)
     {
         bball.setXb(1.000);
@@ -297,10 +299,39 @@ public class Model {
         chocos.clear();
     }
 
+    public void loadGameData(LoadSave loadSave,Paddle paddle, Ball bball) {
+        setExistHeartBlock(loadSave.isExistHeartBlock);
+        setGoldStauts(loadSave.isGoldStauts);
+        setGoDownBall(loadSave.goDownBall);
+        setGoRightBall(loadSave.goRightBall);
+        setColideToBreak(loadSave.colideToBreak);
+        setColideToBreakAndMoveToRight(loadSave.colideToBreakAndMoveToRight);
+        setColideToRightWall(loadSave.colideToRightWall);
+        setColideToLeftWall(loadSave.colideToLeftWall);
+        setColideToRightBlock(loadSave.colideToRightBlock);
+        setColideToBottomBlock(loadSave.colideToBottomBlock);
+        setColideToLeftBlock(loadSave.colideToLeftBlock);
+        setColideToTopBlock(loadSave.colideToTopBlock);
+        setLevel(loadSave.level);
+        setScore(loadSave.score);
+        setHeart(loadSave.heart);
+        setDestroyedBlockCount(loadSave.destroyedBlockCount);
+        bball.setXb(loadSave.xBall);
+        bball.setYb(loadSave.yBall);
+        paddle.setX(loadSave.xBreak);
+        paddle.setY(loadSave.yBreak);
+        paddle.setCenterX(loadSave.centerBreakX);
+        setTime(loadSave.time);
+        setGoldTime(loadSave.goldTime);
+        setvX(loadSave.vX);
 
-    private void paddleimg() {
-        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
-        rect.setFill(pattern);
+        blocks.clear();
+        chocos.clear();
+
+        for (BlockSerializable ser : loadSave.blocks) {
+            int r = new Random().nextInt(200);
+            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
+        }
     }
 
     public Circle getBall() {
@@ -508,6 +539,14 @@ public class Model {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public ArrayList<Block> getBlocks() {
+        return blocks;
+    }
+
+    public void setBlocks(ArrayList<Block> blocks) {
+        this.blocks = blocks;
     }
 
 

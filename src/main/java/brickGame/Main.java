@@ -101,7 +101,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         // Create an instance of the Model
         model = new Model();
-
         startgame();
 
 
@@ -256,16 +255,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private boolean goDownBall                  = true;
     private boolean goRightBall                 = true;
-    private boolean colideToBreak               = false;
-    private boolean colideToBreakAndMoveToRight = true;
-    private boolean colideToRightWall           = false;
-    private boolean colideToLeftWall            = false;
-    private boolean colideToRightBlock          = false;
-    private boolean colideToBottomBlock         = false;
-    private boolean colideToLeftBlock           = false;
-    private boolean colideToTopBlock            = false;
-
-
     private double vX = 1.000;
     private double vY = 1.000;
 
@@ -306,9 +295,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
-            //TODO win level todo...
-            //System.out.println("You Win");
-
             nextLevel();
         }
     }
@@ -386,50 +372,18 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         LoadSave loadSave = new LoadSave();
         loadSave.read();
-
-
-        isExistHeartBlock = loadSave.isExistHeartBlock;
-        isGoldStauts = loadSave.isGoldStauts;
-        goDownBall = loadSave.goDownBall;
-        goRightBall = loadSave.goRightBall;
-        model.setColideToBreak(loadSave.colideToBreak);
-        model.setColideToBreakAndMoveToRight(loadSave.colideToBreakAndMoveToRight);
-        model.setColideToRightWall(loadSave.colideToRightWall);
-        model.setColideToLeftWall(loadSave.colideToLeftWall);
-        model.setColideToRightBlock(loadSave.colideToRightBlock);
-        model.setColideToBottomBlock(loadSave.colideToBottomBlock);
-        model.setColideToLeftBlock(loadSave.colideToLeftBlock);
-        model.setColideToTopBlock(loadSave.colideToTopBlock);
-        level = loadSave.level;
-        score = loadSave.score;
-        heart = loadSave.heart;
-        destroyedBlockCount = loadSave.destroyedBlockCount;
-        xBall = loadSave.xBall;
-        yBall = loadSave.yBall;
-        xBreak = loadSave.xBreak;
-        yBreak = loadSave.yBreak;
-        centerBreakX = loadSave.centerBreakX;
-        time = loadSave.time;
-        goldTime = loadSave.goldTime;
-        vX = loadSave.vX;
-
-        blocks.clear();
-        chocos.clear();
-
-        for (BlockSerializable ser : loadSave.blocks) {
-            int r = new Random().nextInt(200);
-            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
-        }
-
-
+        model.loadGameData(loadSave,paddle,bball);
+        level = model.getLevel();
+        score = model.getScore();
+        heart = model.getHeart();
+        blocks = model.getBlocks();
+        chocos = model.getChocos();
         try {
             loadFromSave = true;
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void nextLevel() {
@@ -438,32 +392,15 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         {
             return;
         }
-
         checktransition = true;
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    vX = 1.000;
-
+                    model.resetGame(bball);
                     engine.stop();
-                    model.resetColideFlags();
-                    goDownBall = true;
-
-                    isGoldStauts = false;
-                    isExistHeartBlock = false;
-
-                    time = 0;
-                    goldTime = 0;
-
-                    engine.stop();
-                    blocks.clear();
-                    chocos.clear();
-                    destroyedBlockCount = 0;
                     start(primaryStage);
-
-
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -478,6 +415,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         try {
             level = model.getLevel();
             score = model.getScore();
+            heart = model.getHeart();
             model.resetGameParameters();
             start(primaryStage);
         } catch (Exception e) {
