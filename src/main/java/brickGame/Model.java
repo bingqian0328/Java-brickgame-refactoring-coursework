@@ -1,5 +1,7 @@
 package brickGame;
 
+import javafx.application.Platform;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
@@ -34,9 +36,13 @@ public class Model {
     private Paddle paddle;
 
     private Rectangle rect;
+
+    private Block bblocks;
     private int ballRadius = 10;
 
     private int score = 0;
+
+    private Score scoree;
 
     private ArrayList<Block> blocks = new ArrayList<>();
 
@@ -48,6 +54,8 @@ public class Model {
     private long hitTime = 0;
 
     private long time = 0 ;
+
+    public Pane root;
 
     private int sceneWidth = 500;
 
@@ -140,10 +148,6 @@ public class Model {
 
     // Private method for ball initialization
     public Ball initBall() {
-        ball = new Circle();
-        ball.setRadius(ballRadius);
-        ball.setFill(new ImagePattern(new Image("ball.png")));
-
         xBall = xBreak + (breakWidth / 2);
         yBall = yBreak - ballRadius - 40;
         return new Ball(xBall, yBall, ballRadius);
@@ -162,6 +166,9 @@ public class Model {
         rect.setHeight(breakHeight);
         rect.setX(xBreak);
         rect.setY(yBreak);
+
+        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
+        rect.setFill(pattern);
     }
 
     //put into view later
@@ -331,6 +338,45 @@ public class Model {
         for (BlockSerializable ser : loadSave.blocks) {
             int r = new Random().nextInt(200);
             blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
+        }
+    }
+
+    public void updateLabels(Ball bball, Paddle paddle) {
+        getrect().setX(paddle.getX());
+        getrect().setY(paddle.getY());
+        getBall().setCenterX(bball.getXb());
+        getBall().setCenterY(bball.getYb());
+
+        for (Bonus choco : chocos) {
+            choco.choco.setY(choco.y);
+        }
+    }
+
+    public void ifnochoco (Bonus choco,Paddle paddle) {
+        if (choco.y > sceneHeigt || choco.taken) {
+            return;
+        }
+    }
+
+    public void chocodrop (Bonus choco,long time)
+    {
+        choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
+    }
+
+
+
+
+
+    public void checkhitcode (int hitCode,Block block)
+    {
+        if (hitCode == Block.HIT_RIGHT) {
+            setColideToRightBlock(true);
+        } else if (hitCode == Block.HIT_BOTTOM) {
+            setColideToBottomBlock(true);
+        } else if (hitCode == Block.HIT_LEFT) {
+            setColideToLeftBlock(true);
+        } else if (hitCode == Block.HIT_TOP) {
+            setColideToTopBlock(true);
         }
     }
 
@@ -548,10 +594,5 @@ public class Model {
     public void setBlocks(ArrayList<Block> blocks) {
         this.blocks = blocks;
     }
-
-
-
-
-
 
 }

@@ -101,6 +101,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         // Create an instance of the Model
         model = new Model();
+        view = new View();
         startgame();
 
 
@@ -187,7 +188,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 new Score().showWin(this);
                 return;
             }
-            bball = model.initBall();
+            initball();
             paddle = model.initBreak();
             model.initBoard(blocks,level,isExistHeartBlock);
 
@@ -199,6 +200,12 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             newGame.setTranslateY(340);
 
         }
+    }
+
+    private void initball()
+    {
+        model.setBall(view.createBall());
+        bball = model.initBall();
     }
 
     @Override
@@ -284,7 +291,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         if (!isGoldStauts) {
             heart--;
-            new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, this);
+            new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, root);
 
             if (heart == 0) {
                 new Score().showGameOver(this);
@@ -314,7 +321,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     outputStream.writeInt(heart);
                     outputStream.writeInt(destroyedBlockCount);
 
-
                     outputStream.writeDouble(xBall);
                     outputStream.writeDouble(yBall);
                     outputStream.writeDouble(xBreak);
@@ -323,7 +329,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     outputStream.writeLong(time);
                     outputStream.writeLong(goldTime);
                     outputStream.writeDouble(vX);
-
 
                     outputStream.writeBoolean(isExistHeartBlock);
                     outputStream.writeBoolean(isGoldStauts);
@@ -386,7 +391,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         }
     }
 
-    private void nextLevel() {
+    public void nextLevel() {
 
         if (checktransition)
         {
@@ -427,82 +432,57 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
                 scoreLabel.setText("Score: " + score);
                 heartLabel.setText("Heart : " + heart);
+                chocos = model.getChocos();
+                model.updateLabels(bball, paddle);
 
-                model.getrect().setX(paddle.getX());
-                model.getrect().setY(paddle.getY());
-                model.getBall().setCenterX(bball.getXb());
-                model.getBall().setCenterY(bball.getYb());
+                if (bball.getYb() >= Block.getPaddingTop() && bball.getYb() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+                    for (final Block block : blocks) {
+                        int hitCode = block.checkHitToBlock(bball.getXb(), bball.getYb(),goRightBall,goDownBall);
+                        if (hitCode != Block.NO_HIT) {
+                            score += 1;
 
-                for (Bonus choco : chocos) {
-                    choco.choco.setY(choco.y);
-                }
+                            new Score().show(block.x, block.y, 1, root);
 
-            }
-        });
+                            block.rect.setVisible(false);
+                            block.isDestroyed = true;
+                            destroyedBlockCount++;
+                            model.resetColideFlags();
 
-        if (bball.getYb() >= Block.getPaddingTop() && bball.getYb() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
-            for (final Block block : blocks) {
-                int hitCode = block.checkHitToBlock(bball.getXb(), bball.getYb(),goRightBall,goDownBall);
-                if (hitCode != Block.NO_HIT) {
-                    score += 1;
-
-                    new Score().show(block.x, block.y, 1, this);
-
-                    block.rect.setVisible(false);
-                    block.isDestroyed = true;
-                    destroyedBlockCount++;
-                    //System.out.println("size is " + blocks.size());
-                    model.resetColideFlags();
-
-                    if (block.type == Block.BLOCK_CHOCO) {
-                        final Bonus choco = new Bonus(block.row, block.column);
-                        choco.timeCreated = time;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                root.getChildren().add(choco.choco);
+                            if (block.type == Block.BLOCK_CHOCO) {
+                                final Bonus choco = new Bonus(block.row, block.column);
+                                choco.timeCreated = time;
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        root.getChildren().add(choco.choco);
+                                    }
+                                });
+                                chocos.add(choco);
                             }
-                        });
-                        chocos.add(choco);
-                    }
 
-                    if (block.type == Block.BLOCK_STAR) {
-                        goldTime = time;
-                        model.getBall().setFill(new ImagePattern(new Image("goldball.png")));
-                        System.out.println("gold ball");
-                        root.getStyleClass().add("goldRoot");
-                        isGoldStauts = true;
-                    }
+                            if (block.type == Block.BLOCK_STAR) {
+                                goldTime = time;
+                                model.getBall().setFill(new ImagePattern(new Image("goldball.png")));
+                                System.out.println("gold ball");
+                                root.getStyleClass().add("goldRoot");
+                                isGoldStauts = true;
+                            }
 
-                    if (block.type == Block.BLOCK_HEART) {
-                        heart++;
-                    }
+                            if (block.type == Block.BLOCK_HEART) {
+                                heart++;
+                            }
 
-                    if (hitCode == Block.HIT_RIGHT) {
-                        model.setColideToRightBlock(true);
-                    } else if (hitCode == Block.HIT_BOTTOM) {
-                        model.setColideToBottomBlock(true);
-                    } else if (hitCode == Block.HIT_LEFT) {
-                        model.setColideToLeftBlock(true);
-                    } else if (hitCode == Block.HIT_TOP) {
-                        model.setColideToTopBlock(true);
-                    }
+                            model.checkhitcode(hitCode,block);
 
+                        }
+                        checkDestroyedCount();
+                    }
                 }
-
-                if (destroyedBlockCount == blocks.size()) {
-                    nextLevel();}
-
-                //TODO hit to break and some work here....
-                //System.out.println("Break in row:" + block.row + " and column:" + block.column + " hit");
-            }
-        }
+                }
+        });
     }
-
-
     @Override
     public void onInit() {
     }
@@ -511,30 +491,34 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     public void onPhysicsUpdate() {
         checkDestroyedCount();
         setPhysicsToBall();
-
-
-        if (time - goldTime > 5000) {
-            model.getBall().setFill(new ImagePattern(new Image("ball.png")));
-            root.getStyleClass().remove("goldRoot");
-            isGoldStauts = false;
-        }
+        updategoldstatus();
 
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
                 continue;
             }
             if (choco.y >= paddle.getY() && choco.y <= paddle.getY() + paddle.getHeight() && choco.x >= paddle.getX() && choco.x <= paddle.getX() + paddle.getWidth()) {
-                System.out.println("You Got it and +3 score for you");
-                choco.taken = true;
-                choco.choco.setVisible(false);
-                score += 3;
-                new Score().show(choco.x, choco.y, 3, this);
+                showchoco(choco);
             }
-            choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
+            model.chocodrop(choco,time);
         }
+    }
+    private void updategoldstatus()
+    {
+     if (time - goldTime > 5000) {
+        model.getBall().setFill(new ImagePattern(new Image("ball.png")));
+        root.getStyleClass().remove("goldRoot");
+        isGoldStauts = false;
+     }
+    }
 
-        //System.out.println("time is:" + time + " goldTime is " + goldTime);
-
+    private void showchoco(Bonus choco)
+    {
+        System.out.println("You Got it and +3 score for you");
+        choco.taken = true;
+        choco.choco.setVisible(false);
+        score += 3;
+        new Score().show(choco.x, choco.y, 3, root);
     }
     @Override
     public void onTime(long time) {
