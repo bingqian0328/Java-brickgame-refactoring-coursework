@@ -17,7 +17,6 @@ public class Model {
     private double xBreak = 0.0f;
     private double yBreak = 640.0f;
     private int breakWidth = 130;
-    private int breakHeight = 30;
 
     private int sceneHeigt = 700;
 

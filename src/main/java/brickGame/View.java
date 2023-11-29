@@ -36,6 +36,8 @@ public class View {
 
     public Pane root;
 
+    private Score score;
+
     private boolean loadFromSave = false;
 
     private double xb;
@@ -110,14 +112,6 @@ public class View {
         newGame.setTranslateY(340);
     }
 
-    public void buttonsposition()
-    {
-        load.setTranslateX(220);
-        load.setTranslateY(300);
-        newGame.setTranslateX(220);
-        newGame.setTranslateY(340);
-    }
-
     public void startgame(Stage primaryStage, Model model, int score, int level, int heart, int sceneWidth, int sceneHeight, ArrayList<Block> blocks,Pane root,Button newGame,Button load)
     {
         scoreLabel = new Label("Score: " + score);
@@ -141,6 +135,54 @@ public class View {
         primaryStage.show();
     }
 
+    public void goldballimg(Circle ball, Pane root)
+    {
+        ball.setFill(new ImagePattern(new Image("goldball.png")));
+        System.out.println("gold ball");
+        root.getStyleClass().add("goldRoot");
+    }
+
+    public void showlevelup(Pane root)
+    {
+        new Score().showMessage("Level Up :)", root);
+    }
+
+    public void showgamesaved(Pane root)
+    {
+        new Score().showMessage("Game Saved", root);
+    }
+
+    public void showgamewin(Pane root)
+    {
+        new Score().showWin(root);
+    }
+
+    public void scoreshow( Pane root)
+    {
+        new Score().show(500 / 2, 700 / 2, -1, root);
+    }
+
+    public void showgameover(Pane root,Controller controller)
+    {
+        new Score().showGameOver(root,controller);
+    }
+
+    public void showblocks(final double x, final double y, Pane root)
+    {
+        new Score().show(x, y, 1, root);
+    }
+
+
+
+
+    public void setvisible()
+    {
+        load.setVisible(false);
+        newGame.setVisible(false);
+    }
+
+
+
 
     public Button getLoadButton() {
         return load;
@@ -160,10 +202,6 @@ public class View {
     public void setNewGameButton(Button newGame) {
         this.newGame = newGame;
     }
-
-
-
-
 
 
 
