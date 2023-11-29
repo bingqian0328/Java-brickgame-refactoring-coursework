@@ -490,25 +490,16 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             view.goldstatusimage(bball,root);
             isGoldStauts = false;
         }
-
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
                 continue;
             }
             if (choco.y >= paddle.getY() && choco.y <= paddle.getY() + paddle.getHeight() && choco.x >= paddle.getX() && choco.x <= paddle.getX() + paddle.getWidth()) {
-                showchoco(choco);
+                view.showchoco(choco,root);
+                score += 3;
             }
             model.chocodrop(choco,time);
         }
-    }
-
-    private void showchoco(Bonus choco)
-    {
-        System.out.println("You Got it and +3 score for you");
-        choco.taken = true;
-        choco.choco.setVisible(false);
-        score += 3;
-        new Score().show(choco.x, choco.y, 3, root);
     }
     @Override
     public void onTime(long time) {

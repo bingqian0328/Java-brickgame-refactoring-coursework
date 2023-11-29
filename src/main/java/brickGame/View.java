@@ -53,7 +53,15 @@ public class View {
     {
             ball.setFill(new ImagePattern(new Image("ball.png")));
             root.getStyleClass().remove("goldRoot");
-        }
+    }
+
+    public void showchoco(Bonus choco,Pane root)
+    {
+        System.out.println("You Got it and +3 score for you");
+        choco.taken = true;
+        choco.choco.setVisible(false);
+        new Score().show(choco.x, choco.y, 3, root);
+    }
 }
 
 
