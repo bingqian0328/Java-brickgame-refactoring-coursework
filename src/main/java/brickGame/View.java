@@ -1,6 +1,7 @@
 package brickGame;
 
 
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.image.Image;
@@ -33,20 +34,27 @@ public class View {
     }
 
 
-    public void paddleimg() {
-        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
-        rect.setFill(pattern);
-    }
-
-    public void createrect() {
+    public Rectangle createrect() {
         rect = new Rectangle();
         rect.setWidth(breakWidth);
         rect.setHeight(breakHeight);
         rect.setX(xBreak);
         rect.setY(yBreak);
+
+        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
+        rect.setFill(pattern);
+        return rect;
     }
     public Circle getBall() {
         return ball;
     }
 
+    public void goldstatusimage(Ball bball,Pane root )
+    {
+            ball.setFill(new ImagePattern(new Image("ball.png")));
+            root.getStyleClass().remove("goldRoot");
+        }
 }
+
+
+

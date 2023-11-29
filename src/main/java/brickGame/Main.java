@@ -93,15 +93,16 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-        view = new View();
         // Create an ImageView for the background image
         ImageView backgroundImage = new ImageView(new Image("bg.jpg"));
         backgroundImage.setFitWidth(sceneWidth);
         backgroundImage.setFitHeight(sceneHeigt);
 
         // Create an instance of the Model
-        model = new Model();
         view = new View();
+        model = new Model();
+        model.setBall(view.createBall());
+        model.setRect(view.createrect());
         startgame();
 
 
@@ -188,7 +189,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 new Score().showWin(this);
                 return;
             }
-            initball();
+            bball= model.initBall();
             paddle = model.initBreak();
             model.initBoard(blocks,level,isExistHeartBlock);
 
@@ -201,13 +202,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
         }
     }
-
-    private void initball()
-    {
-        model.setBall(view.createBall());
-        bball = model.initBall();
-    }
-
     @Override
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
@@ -491,7 +485,11 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     public void onPhysicsUpdate() {
         checkDestroyedCount();
         setPhysicsToBall();
-        updategoldstatus();
+        if (time - goldTime > 5000)
+        {
+            view.goldstatusimage(bball,root);
+            isGoldStauts = false;
+        }
 
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
@@ -502,14 +500,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
             model.chocodrop(choco,time);
         }
-    }
-    private void updategoldstatus()
-    {
-     if (time - goldTime > 5000) {
-        model.getBall().setFill(new ImagePattern(new Image("ball.png")));
-        root.getStyleClass().remove("goldRoot");
-        isGoldStauts = false;
-     }
     }
 
     private void showchoco(Bonus choco)
