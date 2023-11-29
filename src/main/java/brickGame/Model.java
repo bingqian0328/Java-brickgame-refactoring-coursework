@@ -1,6 +1,7 @@
 package brickGame;
 
 import javafx.application.Platform;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -148,34 +149,17 @@ public class Model {
 
     // Private method for ball initialization
     public Ball initBall() {
+        getBall();
         xBall = xBreak + (breakWidth / 2);
         yBall = yBreak - ballRadius - 40;
         return new Ball(xBall, yBall, ballRadius);
     }
 
     public Paddle initBreak() {
-        createrect();
-        paddleimg();
+        getrect();
         return new Paddle(0, 640, 130, 30);
     }
 
-    //put into view later
-    private void createrect() {
-        rect = new Rectangle();
-        rect.setWidth(breakWidth);
-        rect.setHeight(breakHeight);
-        rect.setX(xBreak);
-        rect.setY(yBreak);
-
-        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
-        rect.setFill(pattern);
-    }
-
-    //put into view later
-    private void paddleimg() {
-        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
-        rect.setFill(pattern);
-    }
 
     public void checkBreakCollision(int level, Paddle paddle, Ball bball) {
         if (bball.getYb() >= paddle.getY() - bball.getRadius()) {
