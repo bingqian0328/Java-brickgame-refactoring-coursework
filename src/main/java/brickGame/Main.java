@@ -93,10 +93,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-        // Create an ImageView for the background image
-        ImageView backgroundImage = new ImageView(new Image("bg.jpg"));
-        backgroundImage.setFitWidth(sceneWidth);
-        backgroundImage.setFitHeight(sceneHeigt);
 
         // Create an instance of the Model
         view = new View();
@@ -105,12 +101,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         model.setRect(view.createrect());
         startgame();
 
-
         root = new Pane();
-        root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-
-        // Add the background image as the first child of the root Pane
-        root.getChildren().add(backgroundImage);
+        view.backgrdimg(root);
 
         scoreLabel = new Label("Score: " + score);
         levelLabel = new Label("Level: " + level);
@@ -348,8 +340,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                     outputStream.writeObject(blockSerializables);
 
                     new Score().showMessage("Game Saved", Main.this);
-
-
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {

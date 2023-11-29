@@ -1,7 +1,11 @@
 package brickGame;
 
 
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.image.Image;
@@ -18,6 +22,8 @@ public class View {
     private double yBreak = 640.0f;
     private int breakWidth = 130;
     private int breakHeight = 30;
+
+    public Pane root;
 
     private double xb;
     private double yb;
@@ -62,6 +68,15 @@ public class View {
         choco.choco.setVisible(false);
         new Score().show(choco.x, choco.y, 3, root);
     }
+
+    public void backgrdimg(Pane root){
+        ImageView backgroundImage = new ImageView(new Image("bg.jpg"));
+        backgroundImage.setFitWidth(500);
+        backgroundImage.setFitHeight(700);
+        root.getChildren().add(backgroundImage);
+        root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+    }
+
 }
 
 
