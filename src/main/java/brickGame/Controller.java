@@ -33,6 +33,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private Ball bball;
     private Paddle paddle;
 
+    private bgsound bgsound;
+
     private boolean isGoldStauts      = false;
     private boolean isExistHeartBlock = false;
     private int destroyedBlockCount = 0;
@@ -66,6 +68,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         view = new View();
         model = new Model();
         startgame();
+        bgsound = new bgsound();
+        bgsound.play();
         load = view.getLoadButton();
         newGame = view.getNewGameButton();
         model.setBall(view.createBall());
