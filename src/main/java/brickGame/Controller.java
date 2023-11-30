@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction{
     private int level = 0;
 
+    private boolean isPaused = false;
+
     private double xBreak = 0.0f;
     private double yBreak = 640.0f;
 
@@ -143,6 +145,29 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             case S:
                 saveGame();
                 break;
+            case P:
+                pauseGame();
+                break;
+            case U:
+                unpauseGame();
+                break;
+        }
+    }
+
+    private void pauseGame() {
+        if (!isPaused) {
+            isPaused = true;
+            engine.pause();
+            view.showgamepaused(root);
+        }
+    }
+
+    public void unpauseGame() {
+        if (isPaused) {
+            isPaused = false;
+            engine.resume();
+            view.showgamecont(root);
+            view.removeGamePausedMessage(root);
         }
     }
 
@@ -210,7 +235,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             view.scoreshow(root);
 
             if (heart == 0) {
-                new Score().showGameOver(root,this);
+                view.showgameover(root,this);
                 engine.stop();
             }
         }
@@ -419,5 +444,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     public void onTime(long time) {
         this.time = time;
     }
+
 
 }

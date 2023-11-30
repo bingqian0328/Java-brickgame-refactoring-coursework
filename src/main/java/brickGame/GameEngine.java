@@ -15,6 +15,8 @@ public class GameEngine {
     public boolean isStopped = true;
     private long time = 0;
 
+    private boolean isPaused = false;
+
     public void setOnAction(OnAction onAction) {
         this.onAction = onAction;
     }
@@ -72,6 +74,25 @@ public class GameEngine {
         timeTimeline.setCycleCount(Animation.INDEFINITE);
         timeTimeline.play();
     }
+
+    public void pause() {
+        if (!isPaused && !isStopped) {
+            isPaused = true;
+            updatetime.pause();
+            physicstime.pause();
+            timeTimeline.pause();
+        }
+    }
+
+    public void resume() {
+        if (isPaused && !isStopped) {
+            isPaused = false;
+            updatetime.play();
+            physicstime.play();
+            timeTimeline.play();
+        }
+    }
+
 
     public interface OnAction {
         void onUpdate();

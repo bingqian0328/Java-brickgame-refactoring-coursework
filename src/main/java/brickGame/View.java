@@ -144,6 +144,25 @@ public class View {
         new Score().showMessage("Game Saved", root);
     }
 
+    public void showgamepaused(Pane root)
+    {
+        new Score().showMessage2("Game Paused", root);
+    }
+
+    public void removeGamePausedMessage(Pane root) {
+        root.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText().equals("Game Paused"));
+    }
+
+    public void showgameover (Pane root,Controller controller)
+    {
+        new Score().showGameOver(root,controller);
+    }
+
+
+    public void showgamecont(Pane root)
+    {
+        new Score().showMessage("Game Unpaused", root);
+    }
     public void showgamewin(Pane root)
     {
         new Score().showWin(root);
@@ -152,11 +171,6 @@ public class View {
     public void scoreshow( Pane root)
     {
         new Score().show(500 / 2, 700 / 2, -1, root);
-    }
-
-    public void showgameover(Pane root,Controller controller)
-    {
-        new Score().showGameOver(root,controller);
     }
 
     public void showblocks(final double x, final double y, Pane root)

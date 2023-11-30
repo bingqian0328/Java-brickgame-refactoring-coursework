@@ -4,20 +4,21 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+
 public class Score {
-    public void show(final double x, final double y, int score, final Main main) {
+    private Controller controller;
+    public void show(final double x, final double y, int score, Pane root) {
         String sign = (score >= 0) ? "+" : "";
         final Label label = new Label(sign + score);
         label.setTranslateX(x);
         label.setTranslateY(y);
 
-        Platform.runLater(() -> main.root.getChildren().add(label));
+        Platform.runLater(() -> root.getChildren().add(label));
 
         Timeline timeline = new Timeline();
         for (int i = 0; i < 21; i++) {
@@ -30,12 +31,32 @@ public class Score {
         timeline.play();
     }
 
-    public void showMessage(String message, final Main main) {
+    public void showMessage2(String message, Pane root) {
         final Label label = new Label(message);
         label.setTranslateX(220);
         label.setTranslateY(340);
 
-        Platform.runLater(() -> main.root.getChildren().add(label));
+        Platform.runLater(() -> root.getChildren().add(label));
+
+        Timeline timeline = new Timeline();
+
+        // Add a new key frame to keep the message visible after the initial animation
+        KeyFrame finalKeyFrame = new KeyFrame(Duration.millis(10000),
+                new KeyValue(label.scaleXProperty(), 1.0),
+                new KeyValue(label.scaleYProperty(), 1.0),
+                new KeyValue(label.opacityProperty(), 1.0));
+        timeline.getKeyFrames().add(finalKeyFrame);
+
+        timeline.play();
+    }
+
+
+    public void showMessage(String message, Pane root) {
+        final Label label = new Label(message);
+        label.setTranslateX(220);
+        label.setTranslateY(340);
+
+        Platform.runLater(() -> root.getChildren().add(label));
 
         Timeline timeline = new Timeline();
         for (int i = 0; i < 21; i++) {
@@ -48,7 +69,7 @@ public class Score {
         timeline.play();
     }
 
-    public void showGameOver(final Main main) {
+    public void showGameOver(Pane root, Controller controller) {
         Platform.runLater(() -> {
             Label label = new Label("Game Over :(");
             label.setTranslateX(200);
@@ -59,13 +80,13 @@ public class Score {
             Button restart = new Button("Restart");
             restart.setTranslateX(220);
             restart.setTranslateY(300);
-            restart.setOnAction(event -> main.restartGame());
+            restart.setOnAction(event -> controller.restartGame());
 
-            main.root.getChildren().addAll(label, restart);
+            root.getChildren().addAll(label, restart);
         });
     }
 
-    public void showWin(final Main main) {
+    public void showWin(Pane root) {
         Platform.runLater(() -> {
             Label label = new Label("You Win :)");
             label.setTranslateX(200);
@@ -73,7 +94,7 @@ public class Score {
             label.setScaleX(2);
             label.setScaleY(2);
 
-            main.root.getChildren().addAll(label);
+            root.getChildren().addAll(label);
         });
     }
 }
