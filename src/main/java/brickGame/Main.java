@@ -6,4 +6,3 @@ public class Main{
         javafx.application.Application.launch(Controller.class, args);
     }
 }
-

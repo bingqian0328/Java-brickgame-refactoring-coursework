@@ -23,7 +23,7 @@ public class View {
 
     private Rectangle rect;
 
-    private int ballRadius = 10;
+    private int ballRadius = 12;
 
     private double xBreak = 0.0f;
     private double yBreak = 640.0f;
@@ -53,7 +53,7 @@ public class View {
     public Circle createBall() {
         ball = new Circle();
         ball.setRadius(ballRadius);
-        ball.setFill(new ImagePattern(new Image("ball.png")));
+        ball.setFill(new ImagePattern(new Image("moonball.png")));
         return ball;
     }
 
@@ -65,7 +65,7 @@ public class View {
         rect.setX(xBreak);
         rect.setY(yBreak);
 
-        ImagePattern pattern = new ImagePattern(new Image("block.jpg"));
+        ImagePattern pattern = new ImagePattern(new Image("minepaddle.png"));
         rect.setFill(pattern);
         return rect;
     }
@@ -75,7 +75,7 @@ public class View {
 
     public void goldstatusimage(Ball bball,Pane root )
     {
-            ball.setFill(new ImagePattern(new Image("ball.png")));
+            ball.setFill(new ImagePattern(new Image("moonball.png")));
             root.getStyleClass().remove("goldRoot");
     }
 
@@ -86,15 +86,6 @@ public class View {
         choco.choco.setVisible(false);
         new Score().show(choco.x, choco.y, 3, root);
     }
-
-    public void backgrdimg(Pane root){
-        ImageView backgroundImage = new ImageView(new Image("bg.jpg"));
-        backgroundImage.setFitWidth(500);
-        backgroundImage.setFitHeight(700);
-        root.getChildren().add(backgroundImage);
-        root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
-    }
-
 
     public void setonupdate(int score, int heart)
     {
@@ -142,6 +133,7 @@ public class View {
         root.getStyleClass().add("goldRoot");
     }
 
+
     public void showlevelup(Pane root)
     {
         new Score().showMessage("Level Up :)", root);
@@ -180,9 +172,6 @@ public class View {
         load.setVisible(false);
         newGame.setVisible(false);
     }
-
-
-
 
     public Button getLoadButton() {
         return load;

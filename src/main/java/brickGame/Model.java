@@ -1,13 +1,9 @@
 package brickGame;
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -24,8 +20,6 @@ public class Model {
 
     private View view;
 
-    private Circle createball;
-
     private Circle ball;
     private double xBall;
     private double yBall;
@@ -38,7 +32,7 @@ public class Model {
     private Rectangle rect;
 
     private Block bblocks;
-    private int ballRadius = 10;
+    private int ballRadius = 12;
 
     private int score = 0;
 

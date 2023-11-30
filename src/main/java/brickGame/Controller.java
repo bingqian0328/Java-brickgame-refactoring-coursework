@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -71,7 +70,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         model.setRect(view.createrect());
 
         root = new Pane();
-        view.backgrdimg(root);
         view.startgame(primaryStage,model,score, level,heart,sceneWidth,sceneHeigt,blocks,root,newGame,load);
         Scene scene = primaryStage.getScene();
         scene.setOnKeyPressed(this);
@@ -114,9 +112,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }
 
 
-    }
-    public static void main(String[] args) {
-        launch(args);
     }
 
     private void startgame() {
