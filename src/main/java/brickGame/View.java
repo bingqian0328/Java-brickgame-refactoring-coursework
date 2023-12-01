@@ -4,11 +4,7 @@ package brickGame;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.image.Image;
@@ -69,14 +65,27 @@ public class View {
         rect.setFill(pattern);
         return rect;
     }
+
+    public Rectangle invisiblerect() {
+        ImagePattern pattern = new ImagePattern(new Image("minepaddle.png"));
+        rect.setFill(pattern);
+        return rect;
+    }
+
+
     public Circle getBall() {
         return ball;
     }
 
-    public void goldstatusimage(Ball bball,Pane root )
+    public void revgoldstatusimage(Ball bball,Pane root )
     {
             ball.setFill(new ImagePattern(new Image("moonball.png")));
             root.getStyleClass().remove("goldRoot");
+    }
+
+    public void revflashstatusimage (Ball bball)
+    {
+        ball.setFill(new ImagePattern(new Image("moonball.png")));
     }
 
     public void showchoco(Bonus choco,Pane root)
@@ -133,6 +142,12 @@ public class View {
         root.getStyleClass().add("goldRoot");
     }
 
+    public void flashball(Circle ball)
+    {
+        ball.setFill(new ImagePattern(new Image("fireball.png")));
+        System.out.println("fireball");
+    }
+
 
     public void showlevelup(Pane root)
     {
@@ -176,6 +191,14 @@ public class View {
     public void showblocks(final double x, final double y, Pane root)
     {
         new Score().show(x, y, 1, root);
+    }
+
+    public void hidePaddle(Pane root, Rectangle paddle) {
+        paddle.setVisible(false);
+    }
+
+    public void showPaddle(Pane root, Rectangle paddle) {
+        paddle.setVisible(true);
     }
 
 

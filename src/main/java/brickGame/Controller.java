@@ -13,12 +13,14 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.util.ArrayList;
 public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction{
-    private int level = 0;
+    public int level =17;
 
     private boolean isPaused = false;
 
     private double xBreak = 0.0f;
     private double yBreak = 640.0f;
+
+    private boolean isPaddleDisappeared = false;
 
     private int sceneWidth = 500;
     private int sceneHeigt = 700;
@@ -50,6 +52,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     private long boostTime = 0;
 
+    private long invisibleTime = 0;
+
     private GameEngine engine;
     public static String savePath    = "C:/save/save.mdds";
     public static String savePathDir = "C:/save/";
@@ -68,7 +72,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         bgsound = new bgsound();
-        bgsound.play();
+        //bgsound.play();
 
         // Create an instance of the Model
         view = new View();
@@ -86,7 +90,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
 
         if (loadFromSave == false) {
-            if (level > 1 && level < 18) {
+            if (level > 1 && level < 19) {
                 view.setvisible();
                 engine = new GameEngine();
                 engine.setOnAction(this);
@@ -128,7 +132,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             if (level > 1) {
                 view.showlevelup(root);
             }
-            if (level == 18) {
+            if (level == 19) {
                 view.showgamewin(root);
                 return;
             }
@@ -425,6 +429,12 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                                 bball.setVeloX(bball.getVeloX() * 2);
                                 bball.setYb(bball.getVeloY() * 2);
                             }
+                            if (block.type == Block.BLOCK_HIDE)
+                            {
+                                invisibleTime = time;
+                                isPaddleDisappeared = true;
+                                view.hidePaddle(root, model.getrect());
+                            }
 
                             model.checkhitcode(hitCode,block);
 
@@ -452,6 +462,11 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             bball.setVeloX(1);
             bball.setVeloY(1);
             isFlashStatus = false;
+        }
+        if (isPaddleDisappeared && time - invisibleTime > 5000)
+        {
+            isPaddleDisappeared = true;
+            view.showPaddle(root, model.getrect());
         }
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
