@@ -44,6 +44,8 @@ public class Block implements Serializable {
     public static int BLOCK_STAR = 101;
     public static int BLOCK_HEART = 102;
 
+    public static int BLOCK_BOOST = 103;
+
     private boolean goRightRebounded = false;
     private boolean goDownRebounded = false;
 
@@ -74,14 +76,21 @@ public class Block implements Serializable {
             ImagePattern pattern = new ImagePattern(image);
             rect.setFill(pattern);
         } else if (type == BLOCK_HEART) {
-            Image image = new Image("heart.jpg");
+            Image image = new Image("heart.png");
             ImagePattern pattern = new ImagePattern(image);
             rect.setFill(pattern);
         } else if (type == BLOCK_STAR) {
             Image image = new Image("star.jpg");
             ImagePattern pattern = new ImagePattern(image);
             rect.setFill(pattern);
-        } else {
+        }
+        else if (type == BLOCK_BOOST)
+        {
+            Image image = new Image("flash.png");
+            ImagePattern pattern = new ImagePattern(image);
+            rect.setFill(pattern);
+        }
+        else {
             rect.setFill(color);
         }
 

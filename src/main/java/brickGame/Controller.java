@@ -36,6 +36,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private bgsound bgsound;
 
     private boolean isGoldStauts      = false;
+
+    private boolean isFlashStatus = false;
     private boolean isExistHeartBlock = false;
     private int destroyedBlockCount = 0;
 
@@ -45,6 +47,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private int  score    = 0;
     private long time     = 0;
     private long goldTime = 0;
+
+    private long boostTime = 0;
 
     private GameEngine engine;
     public static String savePath    = "C:/save/save.mdds";
@@ -63,13 +67,13 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        bgsound = new bgsound();
+        bgsound.play();
 
         // Create an instance of the Model
         view = new View();
         model = new Model();
         startgame();
-        bgsound = new bgsound();
-        bgsound.play();
         load = view.getLoadButton();
         newGame = view.getNewGameButton();
         model.setBall(view.createBall());
@@ -116,8 +120,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             engine.start();
             loadFromSave = false;
         }
-
-
     }
 
     private void startgame() {
@@ -248,6 +250,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
             nextLevel();
+            stopBackgroundSound();
         }
     }
 
@@ -270,10 +273,12 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                     outputStream.writeDouble(yBreak);
                     outputStream.writeLong(time);
                     outputStream.writeLong(goldTime);
+                    outputStream.writeLong(boostTime);
                     outputStream.writeDouble(vX);
 
                     outputStream.writeBoolean(isExistHeartBlock);
                     outputStream.writeBoolean(isGoldStauts);
+                    outputStream.writeBoolean(isFlashStatus);
                     outputStream.writeBoolean(goDownBall);
                     outputStream.writeBoolean(goRightBall);
                     outputStream.writeBoolean(model.isColideToBreak());
@@ -411,6 +416,16 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                                 heart++;
                             }
 
+                            if (block.type == Block.BLOCK_BOOST) {
+                                boostTime = time;
+                                // Activate boost status
+                                isFlashStatus = true;
+
+                                // Set a higher velocity for the ball
+                                bball.setVeloX(bball.getVeloX() * 2);
+                                bball.setYb(bball.getVeloY() * 2);
+                            }
+
                             model.checkhitcode(hitCode,block);
 
                         }
@@ -430,8 +445,13 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         setPhysicsToBall();
         if (time - goldTime > 5000)
         {
-            view.goldstatusimage(bball,root);
+            view.revgoldstatusimage(bball,root);
             isGoldStauts = false;
+        }
+        if (time - boostTime > 5000) {
+            bball.setVeloX(1);
+            bball.setVeloY(1);
+            isFlashStatus = false;
         }
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
@@ -447,6 +467,12 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     @Override
     public void onTime(long time) {
         this.time = time;
+    }
+
+    public void stopBackgroundSound() {
+        if (bgsound != null) {
+            bgsound.stop();
+        }
     }
 
 
