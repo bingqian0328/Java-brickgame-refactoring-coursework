@@ -8,12 +8,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
+
+
+
+
 public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction{
-    public int level =17;
+    public int level =18;
 
     private boolean isPaused = false;
 
@@ -43,8 +49,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private boolean isExistHeartBlock = false;
     private int destroyedBlockCount = 0;
 
-    private double v = 1.000;
-
     private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
@@ -68,6 +72,22 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     Button load    = null;
     Button newGame = null;
 
+    private Color[]          colors = new Color[]{
+            Color.MAGENTA,
+            Color.RED,
+            Color.GOLD,
+            Color.CORAL,
+            Color.AQUA,
+            Color.VIOLET,
+            Color.GREENYELLOW,
+            Color.ORANGE,
+            Color.PINK,
+            Color.SLATEGREY,
+            Color.YELLOW,
+            Color.TOMATO,
+            Color.TAN,
+    };
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -77,17 +97,14 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         // Create an instance of the Model
         view = new View();
         model = new Model();
+
         startgame();
-        load = view.getLoadButton();
-        newGame = view.getNewGameButton();
         model.setBall(view.createBall());
         model.setRect(view.createrect());
-
         root = new Pane();
-        view.startgame(primaryStage,model,score, level,heart,sceneWidth,sceneHeigt,blocks,root,newGame,load);
+        view.startgame(primaryStage,model,score, level,heart,sceneWidth,sceneHeigt,blocks,root,view.getNewGameButton(),view.getLoadButton());
         Scene scene = primaryStage.getScene();
         scene.setOnKeyPressed(this);
-
 
         if (loadFromSave == false) {
             if (level > 1 && level < 19) {
@@ -97,26 +114,23 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 engine.setFps(120);
                 engine.start();
             }
-
-            load.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    loadGame();
-
-                    view.setvisible();
-                }
-            });
-
-            newGame.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    engine = new GameEngine();
-                    engine.setOnAction(Controller.this);
-                    engine.setFps(120);
-                    engine.start();
-                    view.setvisible();
-                }
-            });
+            view.getLoadButton().setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        loadGame();
+                        view.setvisible();
+                    }
+                });
+            view.getNewGameButton().setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        engine = new GameEngine();
+                        engine.setOnAction(Controller.this);
+                        engine.setFps(120);
+                        engine.start();
+                        view.setvisible();
+                    }
+                });
         } else {
             engine = new GameEngine();
             engine.setOnAction(this);
@@ -133,7 +147,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 view.showlevelup(root);
             }
             if (level == 19) {
-                view.showgamewin(root);
+                view.showgamewin(this);
                 return;
             }
             bball= model.initBall();
@@ -283,6 +297,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                     outputStream.writeBoolean(isExistHeartBlock);
                     outputStream.writeBoolean(isGoldStauts);
                     outputStream.writeBoolean(isFlashStatus);
+                    outputStream.writeBoolean(isPaddleDisappeared);
                     outputStream.writeBoolean(goDownBall);
                     outputStream.writeBoolean(goRightBall);
                     outputStream.writeBoolean(model.isColideToBreak());
@@ -321,23 +336,21 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }).start();
 
     }
-
     private void loadGame() {
-
         LoadSave loadSave = new LoadSave();
         loadSave.read();
         model.loadGameData(loadSave,paddle,bball);
         level = model.getLevel();
         score = model.getScore();
         heart = model.getHeart();
-        blocks = model.getBlocks();
-        chocos = model.getChocos();
         try {
             loadFromSave = true;
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     public void nextLevel() {
