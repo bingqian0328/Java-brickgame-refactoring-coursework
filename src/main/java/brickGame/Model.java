@@ -370,17 +370,6 @@ public class Model {
         }
     }
 
-    public void ifnochoco (Bonus choco,Paddle paddle) {
-        if (choco.y > sceneHeigt || choco.taken) {
-            return;
-        }
-    }
-
-    public void chocodrop (Bonus choco,long time)
-    {
-        choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
-    }
-
 
 
 

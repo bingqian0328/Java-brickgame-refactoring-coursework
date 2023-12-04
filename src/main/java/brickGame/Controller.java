@@ -84,7 +84,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         bgsound = new bgsound();
         bgsound.play();
         view = new View();
-        // Create an ImageView for the background image
 
         // Create an instance of the Model
         model = new Model();

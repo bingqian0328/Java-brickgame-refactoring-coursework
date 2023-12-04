@@ -39,12 +39,16 @@ public class Block implements Serializable {
     public static int HIT_LEFT = 2;
     public static int HIT_TOP = 3;
 
+    private Controller controller;
+
     public static int BLOCK_NORMAL = 99;
     public static int BLOCK_CHOCO = 100;
     public static int BLOCK_STAR = 101;
     public static int BLOCK_HEART = 102;
 
     public static int BLOCK_BOOST = 103;
+
+    public static int BLOCK_HIDE = 98;
 
     private boolean goRightRebounded = false;
     private boolean goDownRebounded = false;
@@ -87,6 +91,12 @@ public class Block implements Serializable {
         else if (type == BLOCK_BOOST)
         {
             Image image = new Image("flash.png");
+            ImagePattern pattern = new ImagePattern(image);
+            rect.setFill(pattern);
+        }
+        else if (type == BLOCK_HIDE )
+        {
+            Image image = new Image("disappear.png");
             ImagePattern pattern = new ImagePattern(image);
             rect.setFill(pattern);
         }

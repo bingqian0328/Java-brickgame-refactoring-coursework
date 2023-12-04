@@ -117,6 +117,28 @@ public class View {
         newGame.getStyleClass().add("new-game-button");
     }
 
+    public void setScene(boolean loadFromSave,Model model, ArrayList<Block> blocks, Stage primaryStage,int score,int level,int heart, Rectangle rect, Circle ball,Pane root){
+        root = new Pane();
+        scoreLabel = new Label("Score: " + score);
+        levelLabel = new Label("Level: " + level);//need to getlevel from controller afterwards
+        levelLabel.setTranslateY(20);
+        heartLabel = new Label("Heart : " + heart);
+        heartLabel.setTranslateX(500 - 70);
+        if (loadFromSave == false && level!=19) {
+            root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel, newGame, load);
+        } else {
+            root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel);
+        }
+        for (Block block : blocks) {
+            root.getChildren().add(block.rect);
+        }
+        Scene scene = new Scene(root, 500, 700);
+        scene.getStylesheets().add("style.css");
+
+        primaryStage.setTitle("Game");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
     public void goldballimg(Circle ball, Pane root)
     {
         ball.setFill(new ImagePattern(new Image("goldball.png")));
