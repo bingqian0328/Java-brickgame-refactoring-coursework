@@ -1,4 +1,4 @@
-# Brick breaker game JAVA(COMP2042_CW_hfybl3)
+# Refactoring Brick breaker game JAVA(COMP2042_CW_hfybl3)
 Name: Lim Bing Qian
 
 Student ID: 20408309
@@ -65,6 +65,24 @@ In this game, additional new level of level 18 is added to increase the difficul
 [Wii game theme song Youtube link](https://www.youtube.com/watch?v=LYN6DRDQcjI&t=132s)
 
 # Implemented but not working properly
+
+### 1.Added rebound logic so that the ball rebounds to another direction when it hits the edge of a block
+
+- **Description:** At the beginning, when debugging the problem of the ball not rebounding to another direction when it hits certain positions of the block, most of the positions not giving a rebound effect to the ball were solved by making changes to checkHitToBlock method in Block Class but the problem of the ball not rebounding to another direction when it hits the left bottom edge corner of the block was the most obvious problem as the ball still goes in the same direction after hitting and destroying the left bottom edge corner of the block and it couldn't be solved by just making changes to checkHitToBlock. So, I implemented another handleBottomLeftBlockCorner method in setPhysicstoBall to solve this issue. Even though the problem can be considered solved, but sometimes when the ball barely hits and slides past the block,it destroys the block but it doesn't create a rebound effect to the ball.
+
+```Java
+   public void handleBottomLeftBlockCorner(Ball bball, Paddle paddle) {
+        double cornerDistance = Math.sqrt(Math.pow(bball.getXb() - paddle.getX(), 2) + Math.pow(bball.getYb() - paddle.getY() - paddle.getHeight(), 2));
+        if (cornerDistance <= bball.getRadius()) {
+            bball.bounceHorizontally(); //ball go left
+            bball.bounceDown(); //ball go down
+        }
+    }
+```
+
+
+
+
 
 
  
