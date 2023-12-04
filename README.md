@@ -29,7 +29,7 @@ In this game, two new types of blocks are created,Flash Block and Hide Paddle Bl
   - When the ball collides with a Boost Block, the boost and flash effect is triggered.
   - The boost status lasts for 5 seconds.
  
-<img src="https://github.com/bingqian0328/COMP2042_CW_hfybl3/blob/main/src/main/resources/flash.png?raw=true" width="200">
+<img src="https://github.com/bingqian0328/COMP2042_CW_hfybl3/blob/main/src/main/resources/flash.png?raw=true" width="230">
  
 #### Hide Paddle Block
 
@@ -81,7 +81,23 @@ In this game, additional new level of level 18 is added to increase the difficul
         }
     }
 ```
+# Features not implemented 
 
+### 1. Additional ball
+
+A second ball was planned to be added to the final level 18 to increase the difficulty of the game, however it wasn't implemented because of the following reasons:
+     
+- requires additional logic for collision detection with the paddle, blocks, walls, and potentially other game elements. Managing collisions for multiple balls simultaneously increases the complexity of the collision-handling algorithm.
+- adapting to elements such as heart blocks and gold block to work seamlessly with multiple balls requires careful consideration. Ensuring that each ball interacts correctly with these game features adds complexity to the overall game logic.
+
+### 2. multiplayer mode
+
+Multiplayer mode was planned to be added by adding a second paddle as one of the options to play the brickbreaker game. however it wasn't implemented because of the following reasons: 
+
+- Managing latency and ensuring a smooth multiplayer experience, especially in real-time gameplay, is a significant challenge. Minimizing delays between player inputs and game responses is crucial for an enjoyable multiplayer experience.
+- It decreases the difficulty of the game because adding a new paddle means the horizontal space available for the ball to drop below the paddle and chances to reach the ground decreases, making it more easy for user to win the game and therefore causes the game to be less interesting.
+
+# New Java Classes
 
 
 
