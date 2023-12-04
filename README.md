@@ -66,7 +66,7 @@ In this game, additional new level of level 18 is added to increase the difficul
 
 # Implemented but not working properly
 
-### 1.Added rebound logic so that the ball rebounds to another direction when it hits the edge of a block
+### 1.Changed rebound logic so that the ball rebounds to another direction when it hits the edge of a block
 
 - **Description:** At the beginning, when debugging the problem of the ball not rebounding to another direction when it hits certain positions of the block, most of the positions not giving a rebound effect to the ball were solved by making changes to checkHitToBlock method in Block Class but the problem of the ball not rebounding to another direction when it hits the left bottom edge corner of the block was the most obvious problem as the ball still goes in the same direction after hitting and destroying the left bottom edge corner of the block and it couldn't be solved by just making changes to checkHitToBlock. So, I implemented another handleBottomLeftBlockCorner method in setPhysicstoBall to solve this issue.
   
