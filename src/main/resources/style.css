@@ -1,13 +1,31 @@
 .root {
-    -fx-background-color: #1d1d1d;
+    -fx-background-image:url("backgroundgame.png");
+    -fx-background-size: cover;
 }
 
 .goldRoot {
-    -fx-background-color: #4b4a08;
+    -fx-background-image: url("goldbackground.png");
+    -fx-background-size: cover;
 }
 
+
 .label {
-    -fx-text-fill: #FFF;
+    -fx-text-fill: #FFFFFF; /* Change to your desired font color */
     -fx-label-padding: 8px;
     -fx-font-size: 15px;
+    -fx-font-family: "sans-serif"; /* Change to your desired font family */
+}
+
+.button:hover {
+    -fx-background-color: #B87A7A; /* Change color on hover */
+}
+
+.load{
+
+ -fx-background-color: #F6AFAF;
+}
+
+.new-game-button
+{
+ -fx-background-color:#F6AFAF;
 }

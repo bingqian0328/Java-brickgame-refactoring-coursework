@@ -22,6 +22,8 @@ public class Model {
 
     private Circle ball;
     private double xBall;
+
+    private int initialblockcount;
     private double yBall;
 
     private Main main;
@@ -30,8 +32,6 @@ public class Model {
     private Paddle paddle;
 
     private Rectangle rect;
-
-    private Block bblocks;
     private int ballRadius = 12;
 
     private int score = 0;
@@ -43,9 +43,16 @@ public class Model {
     private boolean isGoldStauts = false;
     private boolean isExistHeartBlock = false;
 
+    private boolean isFlashStatus = false;
+
+    private boolean isPaddleDisappeared = false;
+
     private GameEngine engine;
 
-    private long hitTime = 0;
+
+    private long boostTime = 0;
+
+    private long invisibleTime = 0;
 
     private long time = 0 ;
 
@@ -131,7 +138,16 @@ public class Model {
                     }
                 } else if (r % 10 == 3) {
                     type = Block.BLOCK_STAR;
-                } else {
+                }
+                else if (r % 10 == 4)
+                {
+                    type = Block.BLOCK_BOOST;
+                }
+                else if (r % 10 == 6 && level == 18)
+                {
+                    type = Block.BLOCK_HIDE;
+                }
+                else {
                     type = Block.BLOCK_NORMAL;
                 }
                 blocks.add(new Block(j, i, colors[r % (colors.length)], type));
@@ -268,7 +284,7 @@ public class Model {
 
     public void resetGameParameters() {
         level = 0;
-        heart = 1;
+        heart = 3;
         score = 0;
         bball.setXb(1.000);
         destroyedBlockCount = 0;
@@ -276,38 +292,51 @@ public class Model {
         goDownBall = true;
         isGoldStauts = false;
         isExistHeartBlock = false;
-        hitTime = 0;
         time = 0;
         goldTime = 0;
         blocks.clear();
         chocos.clear();
     }
 
-    public void loadGameData(LoadSave loadSave,Paddle paddle, Ball bball) {
-        setExistHeartBlock(loadSave.isExistHeartBlock);
-        setGoldStauts(loadSave.isGoldStauts);
-        setGoDownBall(loadSave.goDownBall);
-        setGoRightBall(loadSave.goRightBall);
-        setColideToBreak(loadSave.colideToBreak);
-        setColideToBreakAndMoveToRight(loadSave.colideToBreakAndMoveToRight);
-        setColideToRightWall(loadSave.colideToRightWall);
-        setColideToLeftWall(loadSave.colideToLeftWall);
-        setColideToRightBlock(loadSave.colideToRightBlock);
-        setColideToBottomBlock(loadSave.colideToBottomBlock);
-        setColideToLeftBlock(loadSave.colideToLeftBlock);
-        setColideToTopBlock(loadSave.colideToTopBlock);
-        setLevel(loadSave.level);
-        setScore(loadSave.score);
-        setHeart(loadSave.heart);
-        setDestroyedBlockCount(loadSave.destroyedBlockCount);
-        bball.setXb(loadSave.xBall);
-        bball.setYb(loadSave.yBall);
-        paddle.setX(loadSave.xBreak);
-        paddle.setY(loadSave.yBreak);
-        paddle.setCenterX(loadSave.centerBreakX);
-        setTime(loadSave.time);
-        setGoldTime(loadSave.goldTime);
-        setvX(loadSave.vX);
+    public void loadGameData(LoadSave loadSave,Paddle paddle, Ball bball,ArrayList<Block> blocks) {
+        this.setLevel(loadSave.level);
+        this.setScore(loadSave.score);
+        this.setHeart(loadSave.heart);
+
+        this.bball.setXb(loadSave.xBall);
+        this.bball.setYb(loadSave.yBall);
+        this.paddle.setX(loadSave.xBreak);
+        this.paddle.setY(loadSave.yBreak);
+        this.paddle.setCenterX(loadSave.centerBreakX);
+
+        this.setTime(loadSave.time);
+        this.setGoldTime(loadSave.goldTime);
+        this.setBoostTime(loadSave.boostTime);
+        this.setInvisibleTime(loadSave.invisibleTime);
+
+        this.setvX(loadSave.vX);
+
+        this.setExistHeartBlock(loadSave.isExistHeartBlock);
+        this.setGoldStauts(loadSave.isGoldStauts);
+
+        this.setGoDownBall(loadSave.goDownBall);
+        this.setGoRightBall(loadSave.goRightBall);
+
+        this.setColideToBreak(loadSave.colideToBreak);
+        this.setColideToBreakAndMoveToRight(loadSave.colideToBreakAndMoveToRight);
+
+        this.setColideToRightWall(loadSave.colideToRightWall);
+        this.setColideToLeftWall(loadSave.colideToLeftWall);
+
+        this.setColideToRightBlock(loadSave.colideToRightBlock);
+        this.setColideToBottomBlock(loadSave.colideToBottomBlock);
+        this.setColideToLeftBlock(loadSave.colideToLeftBlock);
+        this.setColideToTopBlock(loadSave.colideToTopBlock);
+
+        this.setPaddleDisappeared(loadSave.isPaddleDisappeared);
+        this.setFlashStatus(loadSave.isFlashStatus);
+
+        this.setDestroyedBlockCount(loadSave.destroyedBlockCount);
 
         blocks.clear();
         chocos.clear();
@@ -317,6 +346,18 @@ public class Model {
             blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
         }
     }
+
+    public void makeblocks(LoadSave loadSave)
+    {
+        blocks.clear();
+        chocos.clear();
+
+        for (BlockSerializable ser : loadSave.blocks) {
+            int r = new Random().nextInt(200);
+            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
+        }
+    }
+
 
     public void updateLabels(Ball bball, Paddle paddle) {
         getrect().setX(paddle.getX());
@@ -433,6 +474,14 @@ public class Model {
     // Getter and Setter for colideToLeftBlock
     public boolean isColideToLeftBlock() {
         return colideToLeftBlock;
+    }
+
+    public int getInitialBlockCount() {
+        return initialblockcount;
+    }
+
+    public void setInitialBlockCount(int initialBlockCount) {
+        this.initialblockcount = initialBlockCount;
     }
 
     public void setColideToLeftBlock(boolean colideToLeftBlock) {
@@ -571,5 +620,43 @@ public class Model {
     public void setBlocks(ArrayList<Block> blocks) {
         this.blocks = blocks;
     }
+    public boolean isFlashStatus() {
+        return isFlashStatus;
+    }
+
+    // Setter for isFlashStatus
+    public void setFlashStatus(boolean flashStatus) {
+        isFlashStatus = flashStatus;
+    }
+
+    // Getter for isPaddleDisappeared
+    public boolean isPaddleDisappeared() {
+        return isPaddleDisappeared;
+    }
+
+    // Setter for isPaddleDisappeared
+    public void setPaddleDisappeared(boolean paddleDisappeared) {
+        isPaddleDisappeared = paddleDisappeared;
+    }
+
+    public long getBoostTime() {
+        return boostTime;
+    }
+
+    // Setter for boostTime
+    public void setBoostTime(long boostTime) {
+        this.boostTime = boostTime;
+    }
+
+    // Getter for invisibleTime
+    public long getInvisibleTime() {
+        return invisibleTime;
+    }
+
+    // Setter for invisibleTime
+    public void setInvisibleTime(long invisibleTime) {
+        this.invisibleTime = invisibleTime;
+    }
+
 
 }

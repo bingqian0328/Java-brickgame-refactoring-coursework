@@ -6,27 +6,21 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Random;
 
+public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
 
-
-
-public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction{
-    public int level =18;
-
-    private boolean isPaused = false;
+    private int level = 0;
 
     private double xBreak = 0.0f;
+    private double centerBreakX;
     private double yBreak = 640.0f;
-
-    private boolean isPaddleDisappeared = false;
 
     private int sceneWidth = 500;
     private int sceneHeigt = 700;
@@ -34,6 +28,19 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private boolean checktransition = false ;
     private static int LEFT  = 1;
     private static int RIGHT = 2;
+    private double xBall;
+    private double yBall;
+
+    private boolean isPaused = false;
+
+    private boolean isPaddleDisappeared = false;
+
+    private boolean isFlashStatus = false;
+
+    private long boostTime = 0;
+
+    private long invisibleTime = 0;
+
     private View view;
 
     private Model model;
@@ -41,22 +48,16 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private Ball bball;
     private Paddle paddle;
 
-    private bgsound bgsound;
-
     private boolean isGoldStauts      = false;
-
-    private boolean isFlashStatus = false;
     private boolean isExistHeartBlock = false;
     private int destroyedBlockCount = 0;
+
+    private double v = 1.000;
 
     private int  heart    = 1;
     private int  score    = 0;
     private long time     = 0;
     private long goldTime = 0;
-
-    private long boostTime = 0;
-
-    private long invisibleTime = 0;
 
     private GameEngine engine;
     public static String savePath    = "C:/save/save.mdds";
@@ -65,6 +66,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
     public  Pane             root;
+    private Label            scoreLabel;
+    private Label            heartLabel;
+    private Label            levelLabel;
 
     private boolean loadFromSave = false;
 
@@ -72,39 +76,48 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     Button load    = null;
     Button newGame = null;
 
-    private Color[]          colors = new Color[]{
-            Color.MAGENTA,
-            Color.RED,
-            Color.GOLD,
-            Color.CORAL,
-            Color.AQUA,
-            Color.VIOLET,
-            Color.GREENYELLOW,
-            Color.ORANGE,
-            Color.PINK,
-            Color.SLATEGREY,
-            Color.YELLOW,
-            Color.TOMATO,
-            Color.TAN,
-    };
+    private bgsound bgsound;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         bgsound = new bgsound();
-        //bgsound.play();
+        bgsound.play();
+        view = new View();
+        // Create an ImageView for the background image
 
         // Create an instance of the Model
-        view = new View();
         model = new Model();
+        view = new View();
 
         startgame();
+
+
+        root = new Pane();
+
+        // Add the background image as the first child of the root Pane
+        scoreLabel = new Label("Score: " + score);
+        levelLabel = new Label("Level: " + level);
+        levelLabel.setTranslateY(20);
+        heartLabel = new Label("Heart : " + heart);
+        heartLabel.setTranslateX(sceneWidth - 70);
         model.setBall(view.createBall());
         model.setRect(view.createrect());
-        root = new Pane();
-        view.startgame(primaryStage,model,score, level,heart,sceneWidth,sceneHeigt,blocks,root,view.getNewGameButton(),view.getLoadButton());
-        Scene scene = primaryStage.getScene();
+        if (loadFromSave == false && level != 19) {
+            root.getChildren().addAll(model.getrect(), model.getBall(),scoreLabel, heartLabel, levelLabel, view.getNewGameButton(),view.getLoadButton());
+        } else {
+            root.getChildren().addAll(model.getrect(), model.getBall(), scoreLabel, heartLabel, levelLabel);
+        }
+        for (Block block : blocks) {
+            root.getChildren().add(block.rect);
+        }
+        Scene scene = new Scene(root, sceneWidth, sceneHeigt);
+        scene.getStylesheets().add("style.css");
         scene.setOnKeyPressed(this);
+
+        primaryStage.setTitle("Game");
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
         if (loadFromSave == false) {
             if (level > 1 && level < 19) {
@@ -114,23 +127,27 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 engine.setFps(120);
                 engine.start();
             }
+
             view.getLoadButton().setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        loadGame();
-                        view.setvisible();
-                    }
-                });
+                @Override
+                public void handle(ActionEvent event) {
+                    loadGame();
+
+                    view.setvisible();
+                }
+            });
+
             view.getNewGameButton().setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        engine = new GameEngine();
-                        engine.setOnAction(Controller.this);
-                        engine.setFps(120);
-                        engine.start();
-                        view.setvisible();
-                    }
-                });
+                @Override
+                public void handle(ActionEvent event) {
+                    engine = new GameEngine();
+                    engine.setOnAction(Controller.this);
+                    engine.setFps(120);
+                    engine.start();
+
+                   view.setvisible();
+                }
+            });
         } else {
             engine = new GameEngine();
             engine.setOnAction(this);
@@ -138,6 +155,11 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             engine.start();
             loadFromSave = false;
         }
+
+
+    }
+    public static void main(String[] args) {
+        launch(args);
     }
 
     private void startgame() {
@@ -150,13 +172,15 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 view.showgamewin(this);
                 return;
             }
-            bball= model.initBall();
+            bball = model.initBall();
             paddle = model.initBreak();
             model.initBoard(blocks,level,isExistHeartBlock);
+
             view.createbuttons();
 
         }
     }
+
     @Override
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
@@ -231,6 +255,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private boolean goDownBall                  = true;
     private boolean goRightBall                 = true;
     private double vX = 1.000;
+    private double vY = 1.000;
+
+
     private void setPhysicsToBall() {
         bball.updatePosition();
         checkTopAndBottomBoundaries();
@@ -246,6 +273,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             model.resetColideFlags();
             bball.bounceDown();
         } else if (bball.getYb() >= sceneHeigt) {
+            view.showgameover(root,this);
             handleBallOutOfBounds();
         }
     }
@@ -256,7 +284,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
         if (!isGoldStauts) {
             heart--;
-            view.scoreshow(root);
+            new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, root);
 
             if (heart == 0) {
                 view.showgameover(root,this);
@@ -267,8 +295,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
+            bgsound.stop();
             nextLevel();
-            stopBackgroundSound();
         }
     }
 
@@ -285,19 +313,20 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                     outputStream.writeInt(level);
                     outputStream.writeInt(score);
                     outputStream.writeInt(heart);
-                    outputStream.writeInt(destroyedBlockCount);
 
+                    outputStream.writeDouble(xBall);
+                    outputStream.writeDouble(yBall);
                     outputStream.writeDouble(xBreak);
                     outputStream.writeDouble(yBreak);
+                    outputStream.writeDouble(centerBreakX);
                     outputStream.writeLong(time);
                     outputStream.writeLong(goldTime);
                     outputStream.writeLong(boostTime);
+                    outputStream.writeLong(invisibleTime);
                     outputStream.writeDouble(vX);
 
                     outputStream.writeBoolean(isExistHeartBlock);
                     outputStream.writeBoolean(isGoldStauts);
-                    outputStream.writeBoolean(isFlashStatus);
-                    outputStream.writeBoolean(isPaddleDisappeared);
                     outputStream.writeBoolean(goDownBall);
                     outputStream.writeBoolean(goRightBall);
                     outputStream.writeBoolean(model.isColideToBreak());
@@ -308,6 +337,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                     outputStream.writeBoolean(model.isColideToBottomBlock());
                     outputStream.writeBoolean(model.isColideToLeftBlock());
                     outputStream.writeBoolean(model.isColideToTopBlock());
+                    outputStream.writeBoolean(isPaddleDisappeared);
+                    outputStream.writeBoolean(isGoldStauts);
+                    outputStream.writeInt(destroyedBlockCount);
 
                     ArrayList<BlockSerializable> blockSerializables = new ArrayList<BlockSerializable>();
                     for (Block block : blocks) {
@@ -336,13 +368,16 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }).start();
 
     }
+
     private void loadGame() {
+
         LoadSave loadSave = new LoadSave();
         loadSave.read();
-        model.loadGameData(loadSave,paddle,bball);
+        model.loadGameData(loadSave,paddle,bball,blocks);
         level = model.getLevel();
-        score = model.getScore();
         heart = model.getHeart();
+        score = model.getScore();
+
         try {
             loadFromSave = true;
             start(primaryStage);
@@ -353,12 +388,13 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     }
 
-    public void nextLevel() {
+    private void nextLevel() {
 
         if (checktransition)
         {
             return;
         }
+
         checktransition = true;
         Platform.runLater(new Runnable() {
 
@@ -394,70 +430,78 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                view.setonupdate(score,heart);
-                chocos = model.getChocos();
+                view.setonupdate(scoreLabel,heartLabel, score,heart);
+
                 model.updateLabels(bball, paddle);
 
-                if (bball.getYb() >= Block.getPaddingTop() && bball.getYb() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
-                    for (final Block block : blocks) {
-                        int hitCode = block.checkHitToBlock(bball.getXb(), bball.getYb(),goRightBall,goDownBall);
-                        if (hitCode != Block.NO_HIT) {
-                            score += 1;
-
-                            view.showblocks(block.x, block.y, root);
-
-                            block.rect.setVisible(false);
-                            block.isDestroyed = true;
-                            destroyedBlockCount++;
-                            model.resetColideFlags();
-
-                            if (block.type == Block.BLOCK_CHOCO) {
-                                final Bonus choco = new Bonus(block.row, block.column);
-                                choco.timeCreated = time;
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        root.getChildren().add(choco.choco);
-                                    }
-                                });
-                                chocos.add(choco);
-                            }
-
-                            if (block.type == Block.BLOCK_STAR) {
-                                goldTime = time;
-                                view.goldballimg(model.getBall(),root);
-                                isGoldStauts = true;
-                            }
-
-                            if (block.type == Block.BLOCK_HEART) {
-                                heart++;
-                            }
-
-                            if (block.type == Block.BLOCK_BOOST) {
-                                boostTime = time;
-                                // Activate boost status
-                                isFlashStatus = true;
-
-                                // Set a higher velocity for the ball
-                                bball.setVeloX(bball.getVeloX() * 2);
-                                bball.setYb(bball.getVeloY() * 2);
-                            }
-                            if (block.type == Block.BLOCK_HIDE)
-                            {
-                                invisibleTime = time;
-                                isPaddleDisappeared = true;
-                                view.hidePaddle(root, model.getrect());
-                            }
-
-                            model.checkhitcode(hitCode,block);
-
-                        }
-                        checkDestroyedCount();
-                    }
+                for (Bonus choco : chocos) {
+                    choco.choco.setY(choco.y);
                 }
+
             }
         });
+
+        if (bball.getYb() >= Block.getPaddingTop() && bball.getYb() <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+            for (final Block block : blocks) {
+                int hitCode = block.checkHitToBlock(bball.getXb(), bball.getYb(),goRightBall,goDownBall);
+                if (hitCode != Block.NO_HIT) {
+                    score += 1;
+
+                    view.showblocks(block.x, block.y, root);
+
+                    block.rect.setVisible(false);
+                    block.isDestroyed = true;
+                    destroyedBlockCount++;
+                    //System.out.println("size is " + blocks.size());
+                    model.resetColideFlags();
+
+                    if (block.type == Block.BLOCK_CHOCO) {
+                        final Bonus choco = new Bonus(block.row, block.column);
+                        choco.timeCreated = time;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                root.getChildren().add(choco.choco);
+                            }
+                        });
+                        chocos.add(choco);
+                    }
+
+                    if (block.type == Block.BLOCK_STAR) {
+                        goldTime = time;
+                        view.goldballimg(model.getBall(),root);
+                        isGoldStauts = true;
+                    }
+
+                    if (block.type == Block.BLOCK_HEART) {
+                        heart++;
+                    }
+                    if (block.type == Block.BLOCK_BOOST) {
+                        boostTime = time;
+                        // Activate boost status
+                        isFlashStatus = true;
+
+                        // Set a higher velocity for the ball
+                        bball.setVeloX(bball.getVeloX() * 2);
+                        bball.setYb(bball.getVeloY() * 2);
+                    }
+                    if (block.type == Block.BLOCK_HIDE)
+                    {
+                        invisibleTime = time;
+                        isPaddleDisappeared = true;
+                        view.hidePaddle(root, model.getrect());
+                    }
+                    model.checkhitcode(hitCode,block);
+
+                }
+
+                if (destroyedBlockCount == blocks.size()) {
+                    nextLevel();}
+            }
+        }
     }
+
+
     @Override
     public void onInit() {
     }
@@ -466,21 +510,22 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     public void onPhysicsUpdate() {
         checkDestroyedCount();
         setPhysicsToBall();
-        if (time - goldTime > 5000)
-        {
+
+
+        if (time - goldTime > 5000) {
             view.revgoldstatusimage(bball,root);
             isGoldStauts = false;
         }
         if (time - boostTime > 5000) {
-            bball.setVeloX(1);
-            bball.setVeloY(1);
-            isFlashStatus = false;
-        }
+        bball.setVeloX(1);
+        bball.setVeloY(1);
+        isFlashStatus = false;
+    }
         if (isPaddleDisappeared && time - invisibleTime > 5000)
-        {
-            isPaddleDisappeared = true;
-            view.showPaddle(root, model.getrect());
-        }
+    {
+        isPaddleDisappeared = true;
+        view.showPaddle(root, model.getrect());
+    }
         for (Bonus choco : chocos) {
             if (choco.y > sceneHeigt || choco.taken) {
                 continue;
@@ -489,7 +534,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 view.showchoco(choco,root);
                 score += 3;
             }
-            model.chocodrop(choco,time);
+            choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
         }
     }
     @Override
@@ -502,6 +547,4 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             bgsound.stop();
         }
     }
-
-
 }

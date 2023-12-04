@@ -39,6 +39,7 @@ public class View {
     private double xb;
     private double yb;
 
+
     private Button load=new Button("Load Game");
     private Button newGame=new Button("Start New Game");
 
@@ -73,6 +74,7 @@ public class View {
     }
 
 
+
     public Circle getBall() {
         return ball;
     }
@@ -96,7 +98,7 @@ public class View {
         new Score().show(choco.x, choco.y, 3, root);
     }
 
-    public void setonupdate(int score, int heart)
+    public void setonupdate(Label scoreLabel,Label heartLabel,int score, int heart)
     {
         scoreLabel.setText("Score: " + score);
         heartLabel.setText("Heart : " + heart);
@@ -108,31 +110,11 @@ public class View {
         newGame = new Button("Start New Game");
         load.setTranslateX(220);
         load.setTranslateY(300);
-        newGame.setTranslateX(220);
+        newGame.setTranslateX(210);
         newGame.setTranslateY(340);
-    }
 
-    public void startgame(Stage primaryStage, Model model, int score, int level, int heart, int sceneWidth, int sceneHeight, ArrayList<Block> blocks,Pane root,Button newGame,Button load)
-    {
-        scoreLabel = new Label("Score: " + score);
-        levelLabel = new Label("Level: " + level);
-        levelLabel.setTranslateY(20);
-        heartLabel = new Label("Heart : " + heart);
-        heartLabel.setTranslateX(sceneWidth - 70);
-        if (loadFromSave == false) {
-            root.getChildren().addAll(model.getrect(), model.getBall(),scoreLabel, heartLabel, levelLabel, newGame,load);
-        } else {
-            root.getChildren().addAll(model.getrect(), model.getBall(), scoreLabel, heartLabel, levelLabel);
-        }
-        for (Block block : blocks) {
-            root.getChildren().add(block.rect);
-        }
-        Scene scene = new Scene(root, sceneWidth, sceneHeight);
-        scene.getStylesheets().add("style.css");
-
-        primaryStage.setTitle("Game");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        load.getStyleClass().add("load");
+        newGame.getStyleClass().add("new-game-button");
     }
 
     public void goldballimg(Circle ball, Pane root)
@@ -178,9 +160,9 @@ public class View {
     {
         new Score().showMessage("Game Unpaused", root);
     }
-    public void showgamewin(Pane root)
+    public void showgamewin(Controller controller)
     {
-        new Score().showWin(root);
+        new Score().showWin(controller);
     }
 
     public void scoreshow( Pane root)
@@ -200,9 +182,6 @@ public class View {
     public void showPaddle(Pane root, Rectangle paddle) {
         paddle.setVisible(true);
     }
-
-
-
 
     public void setvisible()
     {

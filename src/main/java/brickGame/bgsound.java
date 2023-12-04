@@ -8,7 +8,7 @@ public class bgsound {
 
     private MediaPlayer gamesound;
     public bgsound (){
-        gamesound = loadSound("backgroundmusic.mp3");
+        gamesound = loadSound("gamethemesong.mp3");
     }
 
     private MediaPlayer loadSound(String fileName) {
@@ -30,7 +30,7 @@ public class bgsound {
         mediaPlayer = new MediaPlayer(sound);
 
         // Set the volume (0.0 to 1.0)
-        mediaPlayer.setVolume(0.5);
+        mediaPlayer.setVolume(0);
 
         // Set the cycle count (MediaPlayer.INDEFINITE for infinite loop)
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
@@ -43,6 +43,7 @@ public class bgsound {
 
 
     public void stop() {
-        mediaPlayer.stop();
+        gamesound.stop();
     }
+
 }
