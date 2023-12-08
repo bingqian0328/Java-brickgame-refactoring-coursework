@@ -87,11 +87,6 @@ public class View {
             root.getStyleClass().remove("goldRoot");
     }
 
-    public void revflashstatusimage (Ball bball)
-    {
-        ball.setFill(new ImagePattern(new Image("moonball.png")));
-    }
-
     public void showchoco(Bonus choco)
     {
         System.out.println("You Got it and +3 score for you");

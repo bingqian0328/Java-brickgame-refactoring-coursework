@@ -78,6 +78,7 @@ public class Score {
             label.setScaleY(2);
 
             Button restart = new Button("Restart");
+            restart.getStyleClass().add("load");
             restart.setTranslateX(220);
             restart.setTranslateY(300);
             restart.setOnAction(event -> controller.restartGame());
@@ -85,16 +86,16 @@ public class Score {
             root.getChildren().addAll(label, restart);
         });
     }
-
     public void showWin(Pane root) {
         Platform.runLater(() -> {
-            Label label = new Label("You Win :)");
+            Label label = new Label("You Win !!");
             label.setTranslateX(200);
             label.setTranslateY(250);
             label.setScaleX(2);
             label.setScaleY(2);
 
-            root.getChildren().addAll(label);
+            System.out.println("win");
+           root.getChildren().addAll(label);
         });
     }
 }

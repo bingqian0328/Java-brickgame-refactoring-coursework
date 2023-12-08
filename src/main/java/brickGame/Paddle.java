@@ -38,6 +38,11 @@ public class Paddle {
         return y;
     }
 
+    public void setY(double y)
+    {
+        this.y = y;
+    }
+
     public int getWidth() {
         return width;
     }
@@ -56,9 +61,5 @@ public class Paddle {
 
     public void setCenterX(double centerX) {
         this.x = centerX - halfWidth;
-    }
-
-    public void move(int direction) {
-        // Your move logic here
     }
 }
