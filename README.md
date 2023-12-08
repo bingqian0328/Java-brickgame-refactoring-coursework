@@ -140,7 +140,85 @@ This Paddle class was created to represent the paddle object in the game, it enc
 To refactor the code into MVC pattern, I first started with Model class which is a class that is mainly responsible for handling the game logic of this brickbreaker game. 
 
 - **Here are briefly what the model class has:**
-   - 
+   - The initBoard method which is responsible for calculating and initializing the game board with blocks.
+   - The initBall method that initializes the game ball object.
+   - THe initBreak method that initializes the paddle.
+   - Methods that relate to setting physics to the ball, collision detection and handling in a game, it collectively handle various collision scenarios in the game, ensuring that the ball behaves appropriately when interacting with the         paddle, walls, and blocks.
+   - resetGame method that reset the game parameters when restart button is clicked.
+   - loadGameData method that is responsible for loading out the previously saved game parameters and data.
+   - The checkhitcode method is responsible for updating collision flags based on a provided hitCode and a Block object,based on the hitCode, it sets the corresponding collision flag to true.
+   - Setters and getters for various properties in the class.
+ 
+### 4. View.java class
 
+In MVC, the View class is responsible for displaying the user interface and presenting data to user. UI elements such as:
+
+   - Score, heart, level labels
+   - ball and game paddle
+   - buttons for load, new Game, Save game and Restart game 
+   - hide paddle that makes the paddle invisible when hide block is hit, set ball to goldball when goldblock is hit and setScene that set the game scene methods
+   - show score increase, level up, heart count decrease UI elements
+
+are all created here in this View class
+
+### 5. bgsound.java class
+
+This is a class created to handle and manage the background music part of the game
+
+### 6. Controller.java class
+
+Controller class is lastly created as a crucial component responsible for handling user control to the game, updating the model, and coordinating the interaction between the model and the view. 
+
+- **Features of Controller class:**
+   - User Input Handling
+       - The controller captures and processes user input events, including keyboard presses and other GUI interactions.
+   - Model-View Coordination
+       - Coordinates updates between the data model and the GUI view, ensuring that changes in one component are appropriately reflected in the other.
+   - Level Management
+        - Manages the progression of game levels, handling level transitions, and initialization.
+   - Game State Handling
+      - Controls the game state, including pausing and unpausing, responding to game over conditions, and managing game restarts.
+   - Physics and Collision Detection
+     - Implements physics-related logic for the game ball, handles collisions with the paddle, walls, and game blocks.
+   - Bonus, boost and hide block handling
+     - Manages the appearance, movement, and effects of bonus items, such as chocos, gold balls, boosts, and more.
+   - Game Save 
+     - Stores the game parameters of the progress the user chose to save.
+
+# Modified Java Classes
+
+### 1. GameEngine.java class
+- In GameEngine class, instead of using Thread type to run the game engine, Timeline is used instead. By modifying it from Thread to Timeline,it resolved the problem of the game becoming lagged and jammed with bunch of error messages popping up in terminal at higher levels when the ball started moving fast and hitting more blocks at a shorter amount of time. However, the physics of the ball's movement had problem, the blocks are not destroyed when the ball hits the blocks and the ball doesn't rebound when it destroyed a block.
+- Pause game and unpause game feature are also added into the GameEngine class to implement the feature of pause and unpause.
+
+### 2. Block.java class
+- In this Block class, because problems of the ball doesn't rebound when it hits block and the blocks doesn't get destroyed when ball hits it were found, the chechHitToBlock method is modified to fix these problems by changing the rebounding logic.
+
+
+### 3. Bonus.java class
+- Changed the images of the bonus dropping chocos.
+
+### 4. Score.java class
+- Changed game win display method, created a restart button so user gets an option to restart the game even after they won
+
+### 5. LoadSave.java class
+- Added several more fields to store additional information about the game state for the additional features created, such as boostTime, invisibleTime, isPaddleDisssapeared, isFlashstatus variables.
+
+### 6. Main.java class
+- The job Main class was doing is now handed over as Controller class's responsibility, it now serves as an entry point for our BrickBreaker Game with less than 10 lines of code
+
+``` Java
+package brickGame;
+
+
+public class Main{
+
+    public static void main(String[] args) {
+        javafx.application.Application.launch(Controller.class, args);
+    }
+}
+```
+
+# Unexpected Problems
 
 
