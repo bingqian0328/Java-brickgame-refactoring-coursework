@@ -99,11 +99,48 @@ Multiplayer mode was planned to be added by adding a second paddle as one of the
 
 # New Java Classes
 
+### 1. Ball.java class
+A Ball class was created to represent the ball object used in the game. 
 
+- Variables related to the attributes and properties of the ball were created in there such as: 
 
+```Java
+    private double xb; //represent x coordinate of the ball
+    private double yb; //represent y coordinate of the ball
+    private final double radius; //represent radius of the ball
+    private double veloX; //represent velocity of ball in x direction
+    private double veloY; //represent velocity of ball in y direction
+    private boolean goDown; // boolean indicating direction of movement for the ball
+    private boolean goRight; //boolean indicating direction of movement for the ball
+```
 
+- Constructor was implemented to initialise the ball with certain properties values
+- Setters and getters for the variables were also created to provide methods to retrieve and modify the ball's attributes, such as position, velocity, radius, and movement direction.
+- Methods like isGoingDown(), isGoingRight(), etc., also provide convenient ways to check the current direction of the ball.
+- The method updatePostion() was also created to update the position of the ball based on its current velocity and direction.
 
- 
+### 2. Paddle.java class 
+This Paddle class was created to represent the paddle object in the game, it encapsulates the properties and functionality of a paddle, providing methods for its position manipulation, and retrieval of important attributes.
+
+- Variables related to the attributes and properties of the paddle were created in there such as:
+
+```Java
+    private double x; // x-coordinate of the paddle
+    private double y; // y-coordinate of the paddle
+    private int width; //width of the paddle
+    private int height; //height of the paddle
+    private int halfWidth; //half of paddle's width, used for ball rebounding calculations
+```
+
+- The constructor initializes the Paddle object with specified starting coordinates (x and y) and dimensions (width and height). It also calculates and sets halfWidth based on the given width.
+- Setters and getters for the variables were also created to provide methods to retrieve and modify the paddle's attributes. 
+
+### 3. Model.java class
+
+To refactor the code into MVC pattern, I first started with Model class which is a class that is mainly responsible for handling the game logic of this brickbreaker game. 
+
+- **Here are briefly what the model class has:**
+   - 
 
 
 
