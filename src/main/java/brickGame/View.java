@@ -123,9 +123,12 @@ public class View {
         heartLabel.setTranslateX(500 - 70);
         if (loadFromSave == false && level!=19) {
             root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel, newGame, load);
-        } else {
-            showWinText();
+        } else if (level != 19) {
             root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel);
+        }
+        else
+        {
+            showWinText(controller);
         }
         for (Block block : blocks) {
             root.getChildren().add(block.rect);
@@ -183,9 +186,9 @@ public class View {
     }
 
 
-    public void showWinText() {
+    public void showWinText(Controller controller) {
         score = new Score();
-        score.showWin(root);
+        score.showWin(root,controller);
         }
 
     public void scoreshow( )

@@ -17,15 +17,6 @@ public class Paddle {
         this.halfWidth = width / 2;
     }
 
-    public Rectangle createPaddle() {
-        Rectangle paddle = new Rectangle();
-        paddle.setWidth(width);
-        paddle.setHeight(height);
-        paddle.setX(x);
-        paddle.setY(y);
-        return paddle;
-    }
-
     public double getX() {
         return x;
     }

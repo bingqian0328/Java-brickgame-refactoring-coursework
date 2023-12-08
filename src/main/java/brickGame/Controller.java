@@ -140,9 +140,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
 
     }
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     private void startgame() {
         if (loadFromSave == false) {
