@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
 
-    private int level = 0;
+    private int level = 18;
 
     private double xBreak = 0.0f;
     private double centerBreakX;
@@ -81,9 +81,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
-        bgsound = new bgsound();
-        bgsound.play();
         view = new View();
+        bgsound = new bgsound();
 
         // Create an instance of the Model
         model = new Model();
@@ -95,27 +94,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         root = new Pane();
 
         // Add the background image as the first child of the root Pane
-        scoreLabel = new Label("Score: " + score);
-        levelLabel = new Label("Level: " + level);
-        levelLabel.setTranslateY(20);
-        heartLabel = new Label("Heart : " + heart);
-        heartLabel.setTranslateX(sceneWidth - 70);
         model.setBall(view.createBall());
         model.setRect(view.createrect());
-        if (loadFromSave == false && level != 19) {
-            root.getChildren().addAll(model.getrect(), model.getBall(),scoreLabel, heartLabel, levelLabel, view.getNewGameButton(),view.getLoadButton());
-        } else {
-            root.getChildren().addAll(model.getrect(), model.getBall(), scoreLabel, heartLabel, levelLabel);
-        }
-        for (Block block : blocks) {
-            root.getChildren().add(block.rect);
-        }
-        Scene scene = new Scene(root, sceneWidth, sceneHeigt);
-        scene.getStylesheets().add("style.css");
-        scene.setOnKeyPressed(this);
-
-        primaryStage.setTitle("Game");
-        primaryStage.setScene(scene);
+        view.setScene(this,loadFromSave,model,blocks,primaryStage,score,level,heart,model.getrect(),model.getBall());
         primaryStage.show();
 
         if (loadFromSave == false) {
@@ -133,6 +114,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                     loadGame();
 
                     view.setvisible();
+                    bgsound.play();
                 }
             });
 
@@ -145,6 +127,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                     engine.start();
 
                    view.setvisible();
+
+                    bgsound.play();
                 }
             });
         } else {
@@ -165,12 +149,12 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         if (loadFromSave == false) {
             level++;
             if (level > 1) {
-                view.showlevelup(root);
+                view.showlevelup();
             }
             if (level == 19) {
-                view.showgamewin(this);
-                return;
+                return; 
             }
+
             bball = model.initBall();
             paddle = model.initBreak();
             model.initBoard(blocks,level,isExistHeartBlock);
@@ -179,6 +163,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
         }
     }
+
+
+
 
     @Override
     public void handle(KeyEvent event) {
@@ -205,7 +192,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         if (!isPaused) {
             isPaused = true;
             engine.pause();
-            view.showgamepaused(root);
+            view.showgamepaused();
         }
     }
 
@@ -213,8 +200,8 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         if (isPaused) {
             isPaused = false;
             engine.resume();
-            view.showgamecont(root);
-            view.removeGamePausedMessage(root);
+            view.showgamecont();
+            view.removeGamePausedMessage();
         }
     }
 
@@ -272,7 +259,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             model.resetColideFlags();
             bball.bounceDown();
         } else if (bball.getYb() >= sceneHeigt) {
-            view.showgameover(root,this);
+            view.showgameover(this);
             handleBallOutOfBounds();
         }
     }
@@ -283,10 +270,10 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
         if (!isGoldStauts) {
             heart--;
-            new Score().show(sceneWidth / 2, sceneHeigt / 2, -1, root);
+           view.scoreshow();
 
             if (heart == 0) {
-                view.showgameover(root,this);
+                view.showgameover(this);
                 engine.stop();
             }
         }
@@ -294,7 +281,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
-            bgsound.stop();
             nextLevel();
         }
     }
@@ -350,7 +336,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
                     outputStream.writeObject(blockSerializables);
 
-                    view.showgamesaved(root);
+                    view.showgamesaved();
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -429,7 +415,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                view.setonupdate(scoreLabel,heartLabel, score,heart);
+                view.setonupdate(score,heart);
 
                 model.updateLabels(bball, paddle);
 
@@ -446,7 +432,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 if (hitCode != Block.NO_HIT) {
                     score += 1;
 
-                    view.showblocks(block.x, block.y, root);
+                    view.showblocks(block.x, block.y);
 
                     block.rect.setVisible(false);
                     block.isDestroyed = true;
@@ -460,7 +446,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                root.getChildren().add(choco.choco);
+                                view.root.getChildren().add(choco.choco);
                             }
                         });
                         chocos.add(choco);
@@ -468,7 +454,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
                     if (block.type == Block.BLOCK_STAR) {
                         goldTime = time;
-                        view.goldballimg(model.getBall(),root);
+                        view.goldballimg(model.getBall());
                         isGoldStauts = true;
                     }
 
@@ -512,7 +498,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
 
         if (time - goldTime > 5000) {
-            view.revgoldstatusimage(bball,root);
+            view.revgoldstatusimage(bball);
             isGoldStauts = false;
         }
         if (time - boostTime > 5000) {
@@ -530,7 +516,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
                 continue;
             }
             if (choco.y >= paddle.getY() && choco.y <= paddle.getY() + paddle.getHeight() && choco.x >= paddle.getX() && choco.x <= paddle.getX() + paddle.getWidth()) {
-                view.showchoco(choco,root);
+                view.showchoco(choco);
                 score += 3;
             }
             choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;

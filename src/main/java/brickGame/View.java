@@ -32,6 +32,8 @@ public class View {
 
     public Pane root;
 
+    private Controller controller;
+
     private Score score;
 
     private boolean loadFromSave = false;
@@ -79,7 +81,7 @@ public class View {
         return ball;
     }
 
-    public void revgoldstatusimage(Ball bball,Pane root )
+    public void revgoldstatusimage(Ball bball )
     {
             ball.setFill(new ImagePattern(new Image("moonball.png")));
             root.getStyleClass().remove("goldRoot");
@@ -90,7 +92,7 @@ public class View {
         ball.setFill(new ImagePattern(new Image("moonball.png")));
     }
 
-    public void showchoco(Bonus choco,Pane root)
+    public void showchoco(Bonus choco)
     {
         System.out.println("You Got it and +3 score for you");
         choco.taken = true;
@@ -98,7 +100,7 @@ public class View {
         new Score().show(choco.x, choco.y, 3, root);
     }
 
-    public void setonupdate(Label scoreLabel,Label heartLabel,int score, int heart)
+    public void setonupdate(int score, int heart)
     {
         scoreLabel.setText("Score: " + score);
         heartLabel.setText("Heart : " + heart);
@@ -117,7 +119,7 @@ public class View {
         newGame.getStyleClass().add("new-game-button");
     }
 
-    public void setScene(boolean loadFromSave,Model model, ArrayList<Block> blocks, Stage primaryStage,int score,int level,int heart, Rectangle rect, Circle ball,Pane root){
+    public void setScene(Controller controller,boolean loadFromSave,Model model, ArrayList<Block> blocks, Stage primaryStage,int score,int level,int heart,Rectangle rect,Circle ball){
         root = new Pane();
         scoreLabel = new Label("Score: " + score);
         levelLabel = new Label("Level: " + level);//need to getlevel from controller afterwards
@@ -127,19 +129,21 @@ public class View {
         if (loadFromSave == false && level!=19) {
             root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel, newGame, load);
         } else {
+            showWinText();
             root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel);
         }
         for (Block block : blocks) {
             root.getChildren().add(block.rect);
         }
+
         Scene scene = new Scene(root, 500, 700);
         scene.getStylesheets().add("style.css");
+        scene.setOnKeyPressed(controller);
 
         primaryStage.setTitle("Game");
         primaryStage.setScene(scene);
-        primaryStage.show();
     }
-    public void goldballimg(Circle ball, Pane root)
+    public void goldballimg(Circle ball)
     {
         ball.setFill(new ImagePattern(new Image("goldball.png")));
         System.out.println("gold ball");
@@ -153,46 +157,48 @@ public class View {
     }
 
 
-    public void showlevelup(Pane root)
+    public void showlevelup()
     {
         new Score().showMessage("Level Up :)", root);
     }
 
-    public void showgamesaved(Pane root)
+    public void showgamesaved()
     {
         new Score().showMessage("Game Saved", root);
     }
 
-    public void showgamepaused(Pane root)
+    public void showgamepaused()
     {
         new Score().showMessage2("Game Paused", root);
     }
 
-    public void removeGamePausedMessage(Pane root) {
+    public void removeGamePausedMessage() {
         root.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText().equals("Game Paused"));
     }
 
-    public void showgameover (Pane root,Controller controller)
+    public void showgameover (Controller controller)
     {
         new Score().showGameOver(root,controller);
     }
 
 
-    public void showgamecont(Pane root)
+    public void showgamecont()
     {
         new Score().showMessage("Game Unpaused", root);
     }
-    public void showgamewin(Controller controller)
-    {
-        new Score().showWin(controller);
-    }
 
-    public void scoreshow( Pane root)
+
+    public void showWinText() {
+        score = new Score();
+        score.showWin(root);
+        }
+
+    public void scoreshow( )
     {
         new Score().show(500 / 2, 700 / 2, -1, root);
     }
 
-    public void showblocks(final double x, final double y, Pane root)
+    public void showblocks(final double x, final double y)
     {
         new Score().show(x, y, 1, root);
     }
@@ -230,6 +236,9 @@ public class View {
         this.newGame = newGame;
     }
 
+    public void setRoot(Pane root) {
+        this.root = root;
+    }
 
 
 
