@@ -221,4 +221,84 @@ public class Main{
 
 # Unexpected Problems
 
+### 1. Loadsave problem
+
+- **Problem Description:**
+  - After saving the game progress and loading it back out, the game parameters and blocks doesn't load out as what's saved. This problem occured after I refactored the loadsave method to model class, this problem was only noticed and realised at the end of refactoring stage.
+
+- **Solution:**
+  - Deleted the loadsave method in Model class and redone this part loadsave of code again, it was solved at the end and the cause of this problem was probably due to careless mistakes.
+
+
+### 2. 'You Win' text doesn't display after the user finished level 18
+
+- **Problem Description:**
+  - After the user finished level 18 and won the game, 'You Win' text doesn't display after moving the Pane root to view class from Controller Class and using it in View class.
+
+- **Solution:**
+  - Changed the location showWinText is called, instead of calling it in controller class like that:
+
+  ```Java
+      private void startgame() {
+        if (loadFromSave == false) {
+            level++;
+            if (level > 1) {
+                view.showlevelup();
+            }
+            if (level == 19) {
+                view.showWinText();
+                return; 
+            }
+
+            bball = model.initBall();
+            paddle = model.initBreak();
+            model.initBoard(blocks,level,isExistHeartBlock);
+
+            view.createbuttons();
+
+        }
+    }
+  ```
+
+  I call it here in the View class under the setScene Method
+
+  ```Java
+      public void setScene(Controller controller,boolean loadFromSave,Model model, ArrayList<Block> blocks, Stage primaryStage,int score,int level,int heart,Rectangle rect,Circle ball){
+        root = new Pane();
+        scoreLabel = new Label("Score: " + score);
+        levelLabel = new Label("Level: " + level);//need to getlevel from controller afterwards
+        levelLabel.setTranslateY(20);
+        heartLabel = new Label("Heart : " + heart);
+        heartLabel.setTranslateX(500 - 70);
+        if (loadFromSave == false && level!=19) {
+            root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel, newGame, load);
+        } else if (level != 19) {
+            root.getChildren().addAll(rect,ball, scoreLabel, heartLabel, levelLabel);
+        }
+        else
+        {
+            showWinText(controller); //called here 
+        }
+        for (Block block : blocks) {
+            root.getChildren().add(block.rect);
+        }
+
+        Scene scene = new Scene(root, 500, 700);
+        scene.getStylesheets().add("style.css");
+        scene.setOnKeyPressed(controller);
+
+        primaryStage.setTitle("Game");
+        primaryStage.setScene(scene);
+    }
+  ```
+
+  ### 3. Ball doesn't rebound when it hits the bottom left corner edge
+
+- **Problem Description:**
+  - Even though the block will be destroyed when the ball hits it at its bottom left corner edge, but the it doesn't give the ball a rebounding effect
+
+- **Solution:**
+  - Added a new rebounding logic method under setphyicstoball so it detects and create a rebounding effect to the ball when the ball hits the block's bottom left edge corner. 
+  
+
 
