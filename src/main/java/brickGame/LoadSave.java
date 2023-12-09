@@ -3,7 +3,15 @@ package brickGame;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * This class represents a data structure used for loading and saving game state.
+ * It contains fields for various game parameters and an ArrayList to store block data.
+ */
 public class LoadSave {
+
+    /**
+     * Initialising game state parameters variables that need to be loaded out and saved
+     */
     public boolean isExistHeartBlock;
     public boolean isGoldStauts;
     public boolean goDownBall;
@@ -39,6 +47,10 @@ public class LoadSave {
     public long invisibleTime = 0;
     public ArrayList<BlockSerializable> blocks = new ArrayList<BlockSerializable>();
 
+    /**
+     * Reads the saved game state from a file using an ObjectInputStream.
+     * Handles various exceptions that may occur during the reading process.
+     */
     public void read() {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(new File(Controller.savePath)))) {
             level = inputStream.readInt();

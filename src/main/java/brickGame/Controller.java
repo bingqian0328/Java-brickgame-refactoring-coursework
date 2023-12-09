@@ -13,32 +13,38 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * The {@code Controller} class is the main controller for the brick game.
+ * It manages user control input, game state, and interactions between the model and view.
+ */
 public class Controller extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
 
-    private int level = 18;
+    /**
+     * Initialisation of game parameters
+     */
+    private int level = 0;
 
     private double xBreak = 0.0f;
     private double centerBreakX;
     private double yBreak = 640.0f;
+    private double v = 1.000;
 
+
+    private int  heart    = 1;
+    private int  score    = 0;
+
+    /**
+     * Scene dimensions
+     */
     private int sceneWidth = 500;
     private int sceneHeigt = 700;
 
-    private boolean checktransition = false ;
     private static int LEFT  = 1;
     private static int RIGHT = 2;
     private double xBall;
     private double yBall;
 
-    private boolean isPaused = false;
 
-    private boolean isPaddleDisappeared = false;
-
-    private boolean isFlashStatus = false;
-
-    private long boostTime = 0;
-
-    private long invisibleTime = 0;
 
     private View view;
 
@@ -47,19 +53,43 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private Ball bball;
     private Paddle paddle;
 
+
+    /**
+     * Flags for game state
+     */
+
+    private boolean checktransition = false ;
+    private boolean isPaused = false;
+
+    private boolean isPaddleDisappeared = false;
+
+    private boolean isFlashStatus = false;
+
     private boolean isGoldStauts      = false;
     private boolean isExistHeartBlock = false;
     private int destroyedBlockCount = 0;
 
-    private double v = 1.000;
-
-    private int  heart    = 1;
-    private int  score    = 0;
+    /**
+     * Times for ball at different conditions
+     */
     private long time     = 0;
     private long goldTime = 0;
 
+    private long boostTime = 0;
+
+    private long invisibleTime = 0;
+
     private GameEngine engine;
+
+
+    /**
+     * The file path for saving and loading game data.
+     */
     public static String savePath    = "C:/save/save.mdds";
+
+    /**
+     * The directory path for saving game data.
+     */
     public static String savePathDir = "C:/save/";
 
     private ArrayList<Block> blocks = new ArrayList<Block>();
@@ -77,6 +107,12 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     private bgsound bgsound;
 
+    /**
+     * Entry point of the application.
+     *
+     * @param primaryStage The primary stage for the application.
+     * @throws Exception If an exception occurs during application start.
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -141,14 +177,17 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     }
 
+    /**
+     * Starts the game by initializing the ball, paddle, and game board until it reaches level 19
+     */
     private void startgame() {
         if (loadFromSave == false) {
             level++;
             if (level > 1) {
-                view.showlevelup();
+                view.showlevelup(root);
             }
             if (level == 19) {
-                return; 
+                return;
             }
 
             bball = model.initBall();
@@ -162,7 +201,11 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
 
 
-
+    /**
+     * Handles key events for user input.
+     *
+     * @param event The key event.
+     */
     @Override
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
@@ -184,6 +227,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }
     }
 
+    /**
+     * Pauses the game.
+     */
     private void pauseGame() {
         if (!isPaused) {
             isPaused = true;
@@ -192,6 +238,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }
     }
 
+    /**
+     * Unpauses the game.
+     */
     public void unpauseGame() {
         if (isPaused) {
             isPaused = false;
@@ -201,6 +250,11 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }
     }
 
+    /**
+     * Moves the paddle based on the specified direction.
+     *
+     * @param direction The direction of movement (LEFT or RIGHT).
+     */
     private void move(final int direction) {
         new Thread(new Runnable() {
             @Override
@@ -233,13 +287,18 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }).start();
     }
 
-
+    /**
+     * Initialise game parameters
+     */
     private boolean goDownBall                  = true;
     private boolean goRightBall                 = true;
     private double vX = 1.000;
     private double vY = 1.000;
 
 
+    /**
+     * Sets the physics for the ball, checking collisions and updating its position.
+     */
     private void setPhysicsToBall() {
         bball.updatePosition();
         checkTopAndBottomBoundaries();
@@ -255,7 +314,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             model.resetColideFlags();
             bball.bounceDown();
         } else if (bball.getYb() >= sceneHeigt) {
-            view.showgameover(this);
+            view.scoreshow();
             handleBallOutOfBounds();
         }
     }
@@ -271,16 +330,27 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             if (heart == 0) {
                 view.showgameover(this);
                 engine.stop();
+                stopBackgroundSound();
             }
         }
     }
 
+    /**
+     * A method to check no of blocks destroyed, if it equals to blocks size of that level, it will go to the next level
+     */
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
             nextLevel();
         }
     }
 
+    /**
+     * Saves the current game state to a file in a separate thread.
+     * The game state includes level, score, heart count, ball and break positions,
+     * time, gold ball status, boost time, invisible time, velocity, and collision flags.
+     * Also, it saves the list of blocks that are not destroyed.
+     * A "Game Saved" text will be displayed once game saved key is pressed
+     */
     private void saveGame() {
         new Thread(new Runnable() {
             @Override
@@ -350,6 +420,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     }
 
+    /**
+     * method to load the saved game parameters out
+     */
     private void loadGame() {
 
         LoadSave loadSave = new LoadSave();
@@ -369,6 +442,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
 
     }
 
+    /**
+     * Moves to the next level when all blocks are destroyed.
+     */
     private void nextLevel() {
 
         if (checktransition)
@@ -395,8 +471,12 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         });
     }
 
+    /**
+     * Restarts the game, resetting all game parameters.
+     */
     public void restartGame() {
         try {
+            stopBackgroundSound();
             level = model.getLevel();
             score = model.getScore();
             heart = model.getHeart();
@@ -406,6 +486,10 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             e.printStackTrace();
         }
     }
+
+    /**
+     * Called when the game is updated.
+     */
     @Override
     public void onUpdate() {
         Platform.runLater(new Runnable() {
@@ -487,6 +571,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     public void onInit() {
     }
 
+    /**
+     * Updates the physics of the game, checking for destroyed blocks, handling boost ball status & paddle disappeared status, and updating bonus objects.
+     */
     @Override
     public void onPhysicsUpdate() {
         checkDestroyedCount();
@@ -518,11 +605,20 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
         }
     }
+
+    /**
+     * Updates the current time in the game.
+     *
+     * @param time The current time in milliseconds.
+     */
     @Override
     public void onTime(long time) {
         this.time = time;
     }
 
+    /**
+     * Stops the background sound if it is playing.
+     */
     public void stopBackgroundSound() {
         if (bgsound != null) {
             bgsound.stop();

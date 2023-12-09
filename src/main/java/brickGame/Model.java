@@ -8,58 +8,134 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * The {@code Model} class represents the model in the MVC (Model-View-Controller) architecture of the Brick Game.
+ * It manages the game state, collision detection, and various parameters related to the game.
+ */
+
 public class Model {
+
+    // Fields representing various aspects of the game state and configuration
+
+    /**
+     * The current game level.
+     */
     private int level = 0;
+
+    /**
+     * The X-coordinate of the break (paddle).
+     */
     private double xBreak = 0.0f;
+
+    /**
+     * The Y-coordinate of the break (paddle).
+     */
     private double yBreak = 640.0f;
+    /**
+     * The width of the break (paddle).
+     */
     private int breakWidth = 130;
 
+    /**
+     * The height of the game scene.
+     */
     private int sceneHeigt = 700;
 
-    private int heart = 3;
+    /**
+     * The number of remaining lives (hearts).
+     */
+    private int heart = 1;
 
-    private View view;
 
+    /**
+     * The main ball in the game.
+     */
     private Circle ball;
+
+    /**
+     * The X-coordinate of the main ball.
+     */
     private double xBall;
 
-    private int initialblockcount;
+    /**
+     * The Y-coordinate of the main ball.
+     */
     private double yBall;
 
-    private Main main;
 
+    /**
+     * The main ball represented as an instance of the Ball class.
+     */
     private Ball bball;
+
+    /**
+     * The break (paddle) represented as an instance of the Paddle class.
+     */
     private Paddle paddle;
 
+    /**
+     * The rectangle representing the break (paddle).
+     */
     private Rectangle rect;
+
+    /**
+     * The radius of the main ball.
+     */
     private int ballRadius = 12;
 
+    /**
+     * The score of blocks hit in the game.
+     */
     private int score = 0;
 
-    private Score scoree;
-
+    /**
+     * The array list of blocks in the game.
+     */
     private ArrayList<Block> blocks = new ArrayList<>();
 
+    /**
+     * Flag indicating whether the gold status is active.
+     */
     private boolean isGoldStauts = false;
+
+    /**
+     * Flag indicating whether a heart block exists in the game.
+     */
     private boolean isExistHeartBlock = false;
 
+    /**
+     * Flag indicating whether the flash status is active.
+     */
     private boolean isFlashStatus = false;
 
+    /**
+     * Flag indicating whether the paddle invisible feature is activated
+     */
     private boolean isPaddleDisappeared = false;
 
-    private GameEngine engine;
-
-
+    /**
+     * The boost time duration.
+     */
     private long boostTime = 0;
 
+    /**
+     * The invisible time duration.
+     */
     private long invisibleTime = 0;
 
+    /**
+     * The game time elapsed.
+     */
     private long time = 0 ;
 
-    public Pane root;
-
+    /**
+     * The width of the game scene.
+     */
     private int sceneWidth = 500;
 
+    /**
+     * Flags for various collision conditions.
+     */
     private boolean colideToBreak = false;
     private boolean colideToBreakAndMoveToRight = false;
     private boolean colideToRightWall = false;
@@ -69,24 +145,44 @@ public class Model {
     private boolean colideToLeftBlock = false;
     private boolean colideToTopBlock = false;
 
+    /**
+     * Flag indicating whether a transition is in progress.
+     */
     private boolean checktransition = false;
 
-    private double centerBreakX ;
-
+    /**
+     * The time duration for gold status.
+     */
     private long goldTime = 0;
 
+    /**
+     * Directional flags for the main ball's movement.
+     */
     private boolean goDownBall                  = true;
     private boolean goRightBall                 = true;
 
+    /**
+     * The X-velocity of the main ball.
+     */
     private double vX = 1.000;
+    /**
+     * The Y-velocity of the main ball.
+     */
     private double vY = 1.000;
 
+    /**
+     * The count of destroyed blocks in the game.
+     */
     private int destroyedBlockCount = 0;
 
-    private LoadSave loadSave;
-
+    /**
+     * The list of bonus items (chocos) present in the game.
+     */
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
 
+    /**
+     * Array of colors for block representation.
+     */
     private Color[]          colors = new Color[]{
             Color.MAGENTA,
             Color.RED,
@@ -103,6 +199,10 @@ public class Model {
             Color.TAN,
     };
 
+    /**
+     * Constructor for the Model class.
+     * Initializes the game board, main ball, and break (paddle).
+     */
     public Model() {
         initBoard(blocks, level,isExistHeartBlock);
         bball = new Ball(xBall, yBall, ballRadius);
@@ -119,6 +219,15 @@ public class Model {
         resetGameParameters();
     }
 
+    // Methods related to game initialization and configuration
+
+    /**
+     * Initializes the game board with blocks based on the specified level and existence of heart blocks.
+     *
+     * @param blocks             The list to store the blocks.
+     * @param level              The current game level.
+     * @param isExistHeartBlock  Flag indicating whether a heart block exists in the game.
+     */
     public void initBoard(ArrayList<Block> blocks, int level,boolean isExistHeartBlock) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < level + 1; j++) {
@@ -156,6 +265,11 @@ public class Model {
     }
 
 
+    /**
+     * Initializes the main ball.
+     *
+     * @return The Ball object representing the main ball.
+     */
     // Private method for ball initialization
     public Ball initBall() {
         getBall();
@@ -164,12 +278,24 @@ public class Model {
         return new Ball(xBall, yBall, ballRadius);
     }
 
+    /**
+     * Initializes the break (paddle).
+     *
+     * @return The Paddle object representing the break.
+     */
     public Paddle initBreak() {
         getrect();
         return new Paddle(0, 640, 130, 30);
     }
 
 
+    /**
+     * Checks for collision between the main ball and the break (paddle).
+     *
+     * @param level  The current game level.
+     * @param paddle The break (paddle) object.
+     * @param bball  The main ball object.
+     */
     public void checkBreakCollision(int level, Paddle paddle, Ball bball) {
         if (bball.getYb() >= paddle.getY() - bball.getRadius()) {
             if (bball.getXb() >= paddle.getX() && bball.getXb() <= paddle.getX() + paddle.getWidth()) {
@@ -178,6 +304,13 @@ public class Model {
         }
     }
 
+    /**
+     * Handles the collision between the main ball and the break (paddle).
+     *
+     * @param level  The current game level.
+     * @param paddle The break (paddle) object.
+     * @param bball  The main ball object.
+     */
     private void handleBreakCollision(int level, Paddle paddle, Ball bball) {
         resetColideFlags();
         colideToBreak = true;
@@ -201,6 +334,12 @@ public class Model {
     }
 
 
+    /**
+     * Checks for collision with the right or left wall of the game scene.
+     *
+     * @param bball      The main ball object.
+     * @param sceneWidth The width of the game scene.
+     */
     public void checkWallCollision(Ball bball,int sceneWidth) {
         if (bball.getXb() >= sceneWidth) {
             resetColideFlags();
@@ -211,6 +350,11 @@ public class Model {
         }
     }
 
+    /**
+     * Handles collision with the break and walls, determining the ball's direction accordingly.
+     *
+     * @param bball The main ball object.
+     */
     public void handleBreakAndWallCollisions(Ball bball) {
         if (colideToBreak) {
             bball.setGoingRight(colideToBreakAndMoveToRight);
@@ -225,6 +369,11 @@ public class Model {
         }
     }
 
+    /**
+     * Checks for collision with blocks and updates ball direction accordingly.
+     *
+     * @param bball The main ball object.
+     */
     public void checkBlockCollisions(Ball bball) {
         if (colideToRightBlock) {
             bball.setGoingRight(true);
@@ -233,6 +382,11 @@ public class Model {
         }
     }
 
+    /**
+     * Handles collision with the left block, updating ball direction accordingly.
+     *
+     * @param bball The main ball object.
+     */
     public void handleLeftBlockCollision(Ball bball) {
         bball.setGoingRight(false);
 
@@ -241,6 +395,12 @@ public class Model {
         }
     }
 
+    /**
+     * Handles collision with the bottom-left corner of a block, updating ball direction accordingly.
+     *
+     * @param bball  The main ball object.
+     * @param paddle The break (paddle) object.
+     */
     public void handleBottomLeftBlockCorner(Ball bball, Paddle paddle) {
         double cornerDistance = Math.sqrt(Math.pow(bball.getXb() - paddle.getX(), 2) + Math.pow(bball.getYb() - paddle.getY() - paddle.getHeight(), 2));
         if (cornerDistance <= bball.getRadius()) {
@@ -249,6 +409,11 @@ public class Model {
         }
     }
 
+    /**
+     * Checks for collision with the top or bottom block boundaries, updating ball direction accordingly.
+     *
+     * @param bball The main ball object.
+     */
     public void checkTopAndBottomBlockCollisions( Ball bball) {
         if (colideToTopBlock) {
             bball.setGoingDown(false);
@@ -257,6 +422,9 @@ public class Model {
         }
     }
 
+    /**
+     * Resets the collision flags for various conditions.
+     */
     public void resetColideFlags() {
         colideToBreak = false;
         colideToBreakAndMoveToRight = false;
@@ -268,6 +436,13 @@ public class Model {
         colideToBottomBlock = false;
     }
 
+    // Methods related to game reset and parameter initialization
+
+    /**
+     * Resets the game state, including ball position, collision flags, and block-related information.
+     *
+     * @param bball The main ball object.
+     */
     public void resetGame(Ball bball)
     {
         bball.setXb(1.000);
@@ -282,6 +457,9 @@ public class Model {
         destroyedBlockCount = 0;
     }
 
+    /**
+     * Resets various game parameters to their initial values.
+     */
     public void resetGameParameters() {
         level = 0;
         heart = 3;
@@ -298,6 +476,14 @@ public class Model {
         chocos.clear();
     }
 
+    /**
+     * Loads game data from a saved state, updating the game state and block configuration accordingly.
+     *
+     * @param loadSave The LoadSave object containing the saved game data.
+     * @param paddle   The break (paddle) object.
+     * @param bball    The main ball object.
+     * @param blocks   The list of blocks in the game.
+     */
     public void loadGameData(LoadSave loadSave,Paddle paddle, Ball bball,ArrayList<Block> blocks) {
         this.setLevel(loadSave.level);
         this.setScore(loadSave.score);
@@ -347,18 +533,13 @@ public class Model {
         }
     }
 
-    public void makeblocks(LoadSave loadSave)
-    {
-        blocks.clear();
-        chocos.clear();
 
-        for (BlockSerializable ser : loadSave.blocks) {
-            int r = new Random().nextInt(200);
-            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
-        }
-    }
-
-
+    /**
+     * Updates the position of labels and game elements for the current game state.
+     *
+     * @param bball  The main ball object.
+     * @param paddle The break (paddle) object.
+     */
     public void updateLabels(Ball bball, Paddle paddle) {
         getrect().setX(paddle.getX());
         getrect().setY(paddle.getY());
@@ -370,10 +551,12 @@ public class Model {
         }
     }
 
-
-
-
-
+    /**
+     * Checks the hit code and updates collision flags accordingly.
+     *
+     * @param hitCode The hit code indicating the type of collision.
+     * @param block   The block object involved in the collision.
+     */
     public void checkhitcode (int hitCode,Block block)
     {
         if (hitCode == Block.HIT_RIGHT) {
@@ -387,6 +570,11 @@ public class Model {
         }
     }
 
+    // Getter and Setter methods
+
+    /**
+     * setter and getter methods
+     */
     public Circle getBall() {
         return ball;
     }
@@ -463,14 +651,6 @@ public class Model {
     // Getter and Setter for colideToLeftBlock
     public boolean isColideToLeftBlock() {
         return colideToLeftBlock;
-    }
-
-    public int getInitialBlockCount() {
-        return initialblockcount;
-    }
-
-    public void setInitialBlockCount(int initialBlockCount) {
-        this.initialblockcount = initialBlockCount;
     }
 
     public void setColideToLeftBlock(boolean colideToLeftBlock) {
