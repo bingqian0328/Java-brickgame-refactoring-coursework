@@ -80,6 +80,8 @@ public class View {
         return rect;
     }
 
+
+
     /**
      * Reverts the ball image pattern to the default, indicating the end of the gold status.
      *
@@ -285,30 +287,47 @@ public class View {
         newGame.setVisible(false);
     }
 
-
     /**
-     * setters and getters methods
-     * @return
+     * Gets the "Load Game" button.
+     *
+     * @return The "Load Game" button.
      */
     public Button getLoadButton() {
         return load;
     }
 
-    // Setter for load button
+    /**
+     * Sets the "Load Game" button.
+     *
+     * @param load The new "Load Game" button.
+     */
     public void setLoadButton(Button load) {
         this.load = load;
     }
 
-    // Getter for newGame button
+    /**
+     * Gets the "Start New Game" button.
+     *
+     * @return The "Start New Game" button.
+     */
     public Button getNewGameButton() {
         return newGame;
     }
 
-    // Setter for newGame button
+    /**
+     * Sets the "Start New Game" button.
+     *
+     * @param newGame The new "Start New Game" button.
+     */
     public void setNewGameButton(Button newGame) {
         this.newGame = newGame;
     }
 
+    /**
+     * Sets the root pane.
+     *
+     * @param root The new root pane.
+     */
     public void setRoot(Pane root) {
         this.root = root;
     }

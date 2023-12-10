@@ -1,7 +1,7 @@
 package brickGame;
 
 /**
- * The {@code Ball} class represents the main ball in the Brick Game.
+ * The {@code Ball} class represents the game ball in the Brick Game.
  * It encapsulates properties and behaviors related to the ball's movement and collisions.
  */
 
@@ -96,41 +96,82 @@ public class Ball {
     }
 
     /**
-     * setters and getters methods related to ball's parameters
-     * @return
+     * Gets the x-coordinate of the ball.
+     *
+     * @return The x-coordinate of the ball.
      */
     public double getXb() {
         return xb;
     }
 
+    /**
+     * Sets the x-coordinate of the ball.
+     *
+     * @param xb The new x-coordinate of the ball.
+     */
     public void setXb(double xb) {
         this.xb = xb;
     }
 
+    /**
+     * Gets the y-coordinate of the ball.
+     *
+     * @return The y-coordinate of the ball.
+     */
     public double getYb() {
         return yb;
     }
 
+    /**
+     * Sets the y-coordinate of the ball.
+     *
+     * @param yb The new y-coordinate of the ball.
+     */
     public void setYb(double yb) {
         this.yb = yb;
     }
 
+    /**
+     * Gets the radius of the ball.
+     *
+     * @return The radius of the ball.
+     */
     public double getRadius() {
         return radius;
     }
 
+    /**
+     * Gets the x-velocity of the ball.
+     *
+     * @return The x-velocity of the ball.
+     */
     public double getVeloX() {
         return veloX;
     }
 
+    /**
+     * Sets the x-velocity of the ball.
+     *
+     * @param veloX The new x-velocity of the ball.
+     */
     public void setVeloX(double veloX) {
         this.veloX = veloX;
     }
 
+    /**
+     * Gets the y-velocity of the ball.
+     *
+     * @return The y-velocity of the ball.
+     */
     public double getVeloY() {
         return veloY;
     }
 
+    /**
+     * Sets the y-velocity of the ball.
+     *
+     * @param veloY The new y-velocity of the ball.
+     */
     public void setVeloY(double veloY) {
         this.veloY = veloY;
     }

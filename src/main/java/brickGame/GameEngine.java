@@ -5,6 +5,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 
+/**
+ * The GameEngine class manages the game loop, updating different aspects of the game at regular intervals.
+ */
+
 public class GameEngine {
 
     private OnAction onAction;

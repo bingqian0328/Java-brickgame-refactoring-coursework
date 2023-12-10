@@ -309,6 +309,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         model.checkTopAndBottomBlockCollisions(bball);
     }
 
+    /**
+     * This method is responsible for checking the scenario when the ball is at top and bottom boundaries
+     */
     private void checkTopAndBottomBoundaries() {
         if (bball.getYb() <= 0) {
             model.resetColideFlags();
@@ -319,6 +322,9 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
         }
     }
 
+    /**
+     * This method is responsible for the scenario when the ball is out of bounds
+     */
     private void handleBallOutOfBounds() {
         model.resetColideFlags();
         bball.bounceUp();
