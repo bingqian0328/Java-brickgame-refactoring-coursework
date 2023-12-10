@@ -19,7 +19,7 @@ Student ID: 20408309
 # Implemented and working properly
 ### 1. New Block Types: Flash Block and Hide Paddle Block
 
-In this game, two new types of blocks are created,Flash Block and Hide Paddle Block. It adds strategic depth and surprises to the gameplay. These blocks bring unique effects that can significantly impact the course of the game.
+In this game, two new types of blocks are created in Block class,Flash Block and Hide Paddle Block. It adds strategic depth and surprises to the gameplay. These blocks bring unique effects that can significantly impact the course of the game.
 
 #### Flash Block
 
@@ -43,7 +43,7 @@ In this game, two new types of blocks are created,Flash Block and Hide Paddle Bl
 
 ### 2. New Level
 
-In this game, additional new level of level 18 is added to increase the difficulty of the game. 
+In this game, additional new level of level 18 is added in Controller class to increase the difficulty of the game. 
 
 #### Level 18
 - In this level, a new row of blocks are added and hide paddle blocks are implemented here. A new row of blocks makes the game harder by increasing the chance of the ball hitting the ground and leads to a decrement in heart count. Then, the hide paddle block is introduced above, it makes the paddle invisible for 5 seconds once the hide paddle block is hit, user will have predict the position of the paddle and control paddle to try to not let the ball drops on the ground so the heart count doesn't decrease.
@@ -193,6 +193,7 @@ Controller class is lastly created as a crucial component responsible for handli
 
 ### 2. Block.java class
 - In this Block class, because problems of the ball doesn't rebound when it hits block and the blocks doesn't get destroyed when ball hits it were found, the chechHitToBlock method is modified to fix these problems by changing the rebounding logic.
+- Flash Block and Hide Paddle Block are also added and created here. 
 
 
 ### 3. Bonus.java class
