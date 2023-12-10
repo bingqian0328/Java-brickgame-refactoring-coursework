@@ -19,7 +19,7 @@ Student ID: 20408309
 # Implemented and working properly
 ### 1. New Block Types: Flash Block and Hide Paddle Block
 
-In this game, two new types of blocks are created,Flash Block and Hide Paddle Block. It adds strategic depth and surprises to the gameplay. These blocks bring unique effects that can significantly impact the course of the game.
+In this game, two new types of blocks are created in Block class,Flash Block and Hide Paddle Block. It adds strategic depth and surprises to the gameplay. These blocks bring unique effects that can significantly impact the course of the game.
 
 #### Flash Block
 
@@ -43,7 +43,7 @@ In this game, two new types of blocks are created,Flash Block and Hide Paddle Bl
 
 ### 2. New Level
 
-In this game, additional new level of level 18 is added to increase the difficulty of the game. 
+In this game, additional new level of level 18 is added in Controller class to increase the difficulty of the game. 
 
 #### Level 18
 - In this level, a new row of blocks are added and hide paddle blocks are implemented here. A new row of blocks makes the game harder by increasing the chance of the ball hitting the ground and leads to a decrement in heart count. Then, the hide paddle block is introduced above, it makes the paddle invisible for 5 seconds once the hide paddle block is hit, user will have predict the position of the paddle and control paddle to try to not let the ball drops on the ground so the heart count doesn't decrease.
@@ -69,8 +69,6 @@ In this game, additional new level of level 18 is added to increase the difficul
 ### 1.Changed rebound logic so that the ball rebounds to another direction when it hits the edge of a block
 
 - **Description:** At the beginning, when debugging the problem of the ball not rebounding to another direction when it hits certain positions of the block, most of the positions not giving a rebound effect to the ball were solved by making changes to checkHitToBlock method in Block Class but the problem of the ball not rebounding to another direction when it hits the left bottom edge corner of the block was the most obvious problem as the ball still goes in the same direction after hitting and destroying the left bottom edge corner of the block and it couldn't be solved by just making changes to checkHitToBlock. So, I implemented another handleBottomLeftBlockCorner method in setPhysicstoBall to solve this issue.
-  
- - **Not working properly:** Even though the problem can be considered solved, but sometimes when the ball barely hits and slides past the block,it destroys the block but it doesn't create a rebound effect to the ball.
 
 ```Java
    public void handleBottomLeftBlockCorner(Ball bball, Paddle paddle) {
@@ -81,6 +79,9 @@ In this game, additional new level of level 18 is added to increase the difficul
         }
     }
 ```
+  
+ - **Not working properly:** Even though the problem can be considered solved, but sometimes when the ball barely hits and slides past the block,it destroys the block but it doesn't create a rebound effect to the ball.
+
 # Features not implemented 
 
 ### 1. Additional ball
@@ -193,6 +194,7 @@ Controller class is lastly created as a crucial component responsible for handli
 
 ### 2. Block.java class
 - In this Block class, because problems of the ball doesn't rebound when it hits block and the blocks doesn't get destroyed when ball hits it were found, the chechHitToBlock method is modified to fix these problems by changing the rebounding logic.
+- Flash Block and Hide Paddle Block are also added and created here. 
 
 
 ### 3. Bonus.java class
@@ -200,12 +202,13 @@ Controller class is lastly created as a crucial component responsible for handli
 
 ### 4. Score.java class
 - Changed game win display method, created a restart button so user gets an option to restart the game even after they won
+- Instead of using 'Main main' for the root type, I changed it to 'Pane root' / 'Controller controller' so the root becomes more accessible in other classes and it is more convenient for refactoring. 
 
 ### 5. LoadSave.java class
 - Added several more fields to store additional information about the game state for the additional features created, such as boostTime, invisibleTime, isPaddleDisssapeared, isFlashstatus variables.
 
 ### 6. Main.java class
-- The job Main class was doing is now handed over as Controller class's responsibility, it now serves as an entry point for our BrickBreaker Game with less than 10 lines of code
+- The job Main class was doing is now handed over as Controller class's responsibility, Main class now serves as an entry point for our BrickBreaker Game to execute with less than 10 lines of code
 
 ``` Java
 package brickGame;
