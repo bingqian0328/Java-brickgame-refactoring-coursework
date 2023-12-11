@@ -302,6 +302,4 @@ public class Main{
 
 - **Solution:**
   - Added a new rebounding logic method under setphyicstoball so it detects and create a rebounding effect to the ball when the ball hits the block's bottom left edge corner. 
-  
-
 
