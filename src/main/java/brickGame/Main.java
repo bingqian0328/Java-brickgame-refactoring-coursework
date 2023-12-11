@@ -1,5 +1,14 @@
 package brickGame;
 
+/**
+ * Original Source Code Provided:
+ * See the source code on GitHub: https://github.com/kooitt/CourseworkGame
+ *
+ *
+ *
+ * Refactored and modified code I did:
+ * Check out the repository on GitHub: https://github.com/bingqian0328/COMP2042_CW_hfybl3
+ */
 public class Main{
     /**
      * The main method is the entry point of the Brick Game application.
