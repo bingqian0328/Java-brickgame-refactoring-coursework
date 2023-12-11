@@ -138,7 +138,7 @@ public class Score {
 
             Button restart = new Button("Back to Game Menu");
             restart.getStyleClass().add("load");
-            restart.setTranslateX(220);
+            restart.setTranslateX(180);
             restart.setTranslateY(300);
             restart.setOnAction(event -> controller.restartGame());
 

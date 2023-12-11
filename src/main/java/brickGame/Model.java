@@ -44,7 +44,7 @@ public class Model {
     /**
      * The number of remaining lives (hearts).
      */
-    private int heart = 1;
+    private int heart = 3;
 
 
     /**
@@ -571,258 +571,528 @@ public class Model {
     }
 
     // Getter and Setter methods
-
     /**
-     * setter and getter methods
+     * Gets the ball.
+     *
+     * @return The ball.
      */
     public Circle getBall() {
         return ball;
     }
 
+    /**
+     * Gets the rectangle.
+     *
+     * @return The rectangle.
+     */
     public Rectangle getrect() {
         return rect;
     }
 
-
-    // Setter for ball
+    /**
+     * Sets the ball.
+     *
+     * @param ball The new ball.
+     */
     public void setBall(Circle ball) {
         this.ball = ball;
     }
 
+    /**
+     * Sets the rectangle.
+     *
+     * @param rect The new rectangle.
+     */
     public void setRect(Rectangle rect) {
         this.rect = rect;
     }
 
-
-    // Getter and Setter for colideToBreak
+    /**
+     * Gets the colideToBreak status.
+     *
+     * @return The colideToBreak status.
+     */
     public boolean isColideToBreak() {
         return colideToBreak;
     }
 
+    /**
+     * Sets the colideToBreak status.
+     *
+     * @param colideToBreak The new colideToBreak status.
+     */
     public void setColideToBreak(boolean colideToBreak) {
         this.colideToBreak = colideToBreak;
     }
 
-    // Getter and Setter for colideToBreakAndMoveToRight
+    /**
+     * Gets the colideToBreakAndMoveToRight status.
+     *
+     * @return The colideToBreakAndMoveToRight status.
+     */
     public boolean isColideToBreakAndMoveToRight() {
         return colideToBreakAndMoveToRight;
     }
 
+    /**
+     * Sets the colideToBreakAndMoveToRight status.
+     *
+     * @param colideToBreakAndMoveToRight The new colideToBreakAndMoveToRight status.
+     */
     public void setColideToBreakAndMoveToRight(boolean colideToBreakAndMoveToRight) {
         this.colideToBreakAndMoveToRight = colideToBreakAndMoveToRight;
     }
 
-    // Getter and Setter for colideToRightWall
+    /**
+     * Gets the colideToRightWall status.
+     *
+     * @return The colideToRightWall status.
+     */
     public boolean isColideToRightWall() {
         return colideToRightWall;
     }
 
+    /**
+     * Sets the colideToRightWall status.
+     *
+     * @param colideToRightWall The new colideToRightWall status.
+     */
     public void setColideToRightWall(boolean colideToRightWall) {
         this.colideToRightWall = colideToRightWall;
     }
 
-    // Getter and Setter for colideToLeftWall
+    /**
+     * Gets the colideToLeftWall status.
+     *
+     * @return The colideToLeftWall status.
+     */
     public boolean isColideToLeftWall() {
         return colideToLeftWall;
     }
 
+    /**
+     * Sets the colideToLeftWall status.
+     *
+     * @param colideToLeftWall The new colideToLeftWall status.
+     */
     public void setColideToLeftWall(boolean colideToLeftWall) {
         this.colideToLeftWall = colideToLeftWall;
     }
 
-    // Getter and Setter for colideToRightBlock
+    /**
+     * Gets the colideToRightBlock status.
+     *
+     * @return The colideToRightBlock status.
+     */
     public boolean isColideToRightBlock() {
         return colideToRightBlock;
     }
 
+    /**
+     * Sets the colideToRightBlock status.
+     *
+     * @param colideToRightBlock The new colideToRightBlock status.
+     */
     public void setColideToRightBlock(boolean colideToRightBlock) {
         this.colideToRightBlock = colideToRightBlock;
     }
 
-    // Getter and Setter for colideToBottomBlock
+    /**
+     * Gets the colideToBottomBlock status.
+     *
+     * @return The colideToBottomBlock status.
+     */
     public boolean isColideToBottomBlock() {
         return colideToBottomBlock;
     }
 
+    /**
+     * Sets the colideToBottomBlock status.
+     *
+     * @param colideToBottomBlock The new colideToBottomBlock status.
+     */
     public void setColideToBottomBlock(boolean colideToBottomBlock) {
         this.colideToBottomBlock = colideToBottomBlock;
     }
 
-    // Getter and Setter for colideToLeftBlock
+    /**
+     * Gets the colideToLeftBlock status.
+     *
+     * @return The colideToLeftBlock status.
+     */
     public boolean isColideToLeftBlock() {
         return colideToLeftBlock;
     }
 
+    /**
+     * Sets the colideToLeftBlock status.
+     *
+     * @param colideToLeftBlock The new colideToLeftBlock status.
+     */
     public void setColideToLeftBlock(boolean colideToLeftBlock) {
         this.colideToLeftBlock = colideToLeftBlock;
     }
 
-    // Getter and Setter for colideToTopBlock
+    /**
+     * Gets the colideToTopBlock status.
+     *
+     * @return The colideToTopBlock status.
+     */
     public boolean isColideToTopBlock() {
         return colideToTopBlock;
     }
 
+    /**
+     * Sets the colideToTopBlock status.
+     *
+     * @param colideToTopBlock The new colideToTopBlock status.
+     */
     public void setColideToTopBlock(boolean colideToTopBlock) {
         this.colideToTopBlock = colideToTopBlock;
     }
 
+    /**
+     * Gets the checktransition status.
+     *
+     * @return The checktransition status.
+     */
     public boolean isChecktransition (){
         return checktransition;
     }
 
+    /**
+     * Sets the checktransition status.
+     *
+     * @param checktransition The new checktransition status.
+     */
     public void setChecktransition (boolean checktransition)
     {
         this.checktransition = checktransition;
     }
 
+    /**
+     * Gets the goldTime.
+     *
+     * @return The goldTime.
+     */
     public long getGoldTime() {
         return goldTime;
     }
 
+    /**
+     * Sets the goldTime.
+     *
+     * @param goldTime The new goldTime.
+     */
     public void setGoldTime(long goldTime) {
         this.goldTime = goldTime;
     }
 
+    /**
+     * Gets the goDownBall status.
+     *
+     * @return The goDownBall status.
+     */
     public boolean isGoDownBall() {
         return goDownBall;
     }
 
+    /**
+     * Sets the goDownBall status.
+     *
+     * @param goDownBall The new goDownBall status.
+     */
     public void setGoDownBall(boolean goDownBall) {
         this.goDownBall = goDownBall;
     }
 
+    /**
+     * Gets the goRightBall status.
+     *
+     * @return The goRightBall status.
+     */
     public boolean isGoRightBall() {
         return goRightBall;
     }
 
+    /**
+     * Sets the goRightBall status.
+     *
+     * @param goRightBall The new goRightBall status.
+     */
     public void setGoRightBall(boolean goRightBall) {
         this.goRightBall = goRightBall;
     }
 
+    /**
+     * Gets the vX value.
+     *
+     * @return The vX value.
+     */
     public double getvX() {
         return vX;
     }
 
+    /**
+     * Sets the vX value.
+     *
+     * @param vX The new vX value.
+     */
     public void setvX(double vX) {
         this.vX = vX;
     }
 
+    /**
+     * Gets the vY value.
+     *
+     * @return The vY value.
+     */
     public double getvY() {
         return vY;
     }
 
+    /**
+     * Sets the vY value.
+     *
+     * @param vY The new vY value.
+     */
     public void setvY(double vY) {
         this.vY = vY;
     }
 
+    /**
+     * Gets the destroyedBlockCount value.
+     *
+     * @return The destroyedBlockCount value.
+     */
     public int getDestroyedBlockCount() {
         return destroyedBlockCount;
     }
 
+    /**
+     * Sets the destroyedBlockCount value.
+     *
+     * @param destroyedBlockCount The new destroyedBlockCount value.
+     */
     public void setDestroyedBlockCount(int destroyedBlockCount) {
         this.destroyedBlockCount = destroyedBlockCount;
     }
 
+    /**
+     * Gets the chocos list.
+     *
+     * @return The chocos list.
+     */
     public ArrayList<Bonus> getChocos() {
         return chocos;
     }
 
+    /**
+     * Sets the chocos list.
+     *
+     * @param chocos The new chocos list.
+     */
     public void setChocos(ArrayList<Bonus> chocos) {
         this.chocos = chocos;
     }
 
+    /**
+     * Gets the gold status.
+     *
+     * @return The gold status.
+     */
     public boolean isGoldStauts()
     {
         return isGoldStauts;
     }
 
+    /**
+     * Sets the gold status.
+     *
+     * @param goldstatus The new gold status.
+     */
     public void setGoldStauts (boolean goldstatus)
     {
         this.isGoldStauts = goldstatus;
     }
 
+    /**
+     * Gets the existHeartBlock status.
+     *
+     * @return The existHeartBlock status.
+     */
     public boolean isExistHeartBlock() {
         return isExistHeartBlock;
     }
 
+    /**
+     * Sets the existHeartBlock status.
+     *
+     * @param existHeartBlock The new existHeartBlock status.
+     */
     public void setExistHeartBlock(boolean existHeartBlock) {
         isExistHeartBlock = existHeartBlock;
     }
 
+    /**
+     * Gets the time value.
+     *
+     * @return The time value.
+     */
     public long getTime() {
         return time;
     }
 
+    /**
+     * Sets the time value.
+     *
+     * @param time The new time value.
+     */
     public void setTime(long time) {
         this.time = time;
     }
 
+    /**
+     * Gets the level value.
+     *
+     * @return The level value.
+     */
     public int getLevel() {
         return level;
     }
 
+    /**
+     * Sets the level value.
+     *
+     * @param level The new level value.
+     */
     public void setLevel(int level) {
         this.level = level;
     }
 
+    /**
+     * Gets the heart value.
+     *
+     * @return The heart value.
+     */
     public int getHeart() {
         return heart;
     }
 
+    /**
+     * Sets the heart value.
+     *
+     * @param heart The new heart value.
+     */
     public void setHeart(int heart) {
         this.heart = heart;
     }
 
+    /**
+     * Gets the score value.
+     *
+     * @return The score value.
+     */
     public int getScore()
     {
         return score;
     }
 
+    /**
+     * Sets the score value.
+     *
+     * @param score The new score value.
+     */
     public void setScore(int score) {
         this.score = score;
     }
 
+    /**
+     * Gets the blocks list.
+     *
+     * @return The blocks list.
+     */
     public ArrayList<Block> getBlocks() {
         return blocks;
     }
 
+    /**
+     * Sets the blocks list.
+     *
+     * @param blocks The new blocks list.
+     */
     public void setBlocks(ArrayList<Block> blocks) {
         this.blocks = blocks;
     }
+
+    /**
+     * Gets the flashStatus status.
+     *
+     * @return The flashStatus status.
+     */
     public boolean isFlashStatus() {
         return isFlashStatus;
     }
 
-    // Setter for isFlashStatus
+    /**
+     * Sets the flashStatus status.
+     *
+     * @param flashStatus The new flashStatus status.
+     */
     public void setFlashStatus(boolean flashStatus) {
         isFlashStatus = flashStatus;
     }
 
-    // Getter for isPaddleDisappeared
+    /**
+     * Gets the paddleDisappeared status.
+     *
+     * @return The paddleDisappeared status.
+     */
     public boolean isPaddleDisappeared() {
         return isPaddleDisappeared;
     }
 
-    // Setter for isPaddleDisappeared
+    /**
+     * Sets the paddleDisappeared status.
+     *
+     * @param paddleDisappeared The new paddleDisappeared status.
+     */
     public void setPaddleDisappeared(boolean paddleDisappeared) {
         isPaddleDisappeared = paddleDisappeared;
     }
 
+    /**
+     * Gets the boostTime value.
+     *
+     * @return The boostTime value.
+     */
     public long getBoostTime() {
         return boostTime;
     }
 
-    // Setter for boostTime
+    /**
+     * Sets the boostTime value.
+     *
+     * @param boostTime The new boostTime value.
+     */
     public void setBoostTime(long boostTime) {
         this.boostTime = boostTime;
     }
 
-    // Getter for invisibleTime
+    /**
+     * Gets the invisibleTime value.
+     *
+     * @return The invisibleTime value.
+     */
     public long getInvisibleTime() {
         return invisibleTime;
     }
 
-    // Setter for invisibleTime
+    /**
+     * Sets the invisibleTime value.
+     *
+     * @param invisibleTime The new invisibleTime value.
+     */
     public void setInvisibleTime(long invisibleTime) {
         this.invisibleTime = invisibleTime;
     }

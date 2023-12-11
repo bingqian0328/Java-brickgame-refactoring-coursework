@@ -30,7 +30,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
     private double v = 1.000;
 
 
-    private int  heart    = 1;
+    private int  heart    = 3;
     private int  score    = 0;
 
     /**
@@ -317,7 +317,6 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             model.resetColideFlags();
             bball.bounceDown();
         } else if (bball.getYb() >= sceneHeigt) {
-            view.scoreshow();
             handleBallOutOfBounds();
         }
     }
@@ -487,6 +486,7 @@ public class Controller extends Application implements EventHandler<KeyEvent>, G
             score = model.getScore();
             heart = model.getHeart();
             model.resetGameParameters();
+            blocks.clear();
             start(primaryStage);
         } catch (Exception e) {
             e.printStackTrace();
