@@ -14,7 +14,7 @@ Student ID: 20408309
    ```IDE and Project Settings -> Project Structure -> Libraries -> Check if Javafx library is already imported```
 5) Run Main Class and the game will start
 
-   ```CourseworkGame-master[LabTest2] -> src -> main -> java -> brickGame -> Main -> Run the program```
+   ```COMP2042_CW_hfybl3[LabTest2] -> src -> main -> java -> brickGame -> Main -> Run the program```
    
 # Implemented and working properly
 ### 1. New Block Types: Flash Block and Hide Paddle Block
@@ -302,6 +302,4 @@ public class Main{
 
 - **Solution:**
   - Added a new rebounding logic method under setphyicstoball so it detects and create a rebounding effect to the ball when the ball hits the block's bottom left edge corner. 
-  
-
 
